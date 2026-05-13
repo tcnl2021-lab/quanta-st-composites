@@ -137,6 +137,12 @@ class _ShortLookup:
     def __getitem__(self, target):
         return self.get(target, target)
 
+    # pandas .map() treats non-Mapping objects as callables (one call per
+    # element). Implementing __call__ keeps `df["target"].map(SHORT)` working
+    # alongside the dict-style `SHORT[t]` and `SHORT.get(t)` access patterns.
+    def __call__(self, target):
+        return self.get(target, target)
+
 
 SHORT = _ShortLookup()
 
