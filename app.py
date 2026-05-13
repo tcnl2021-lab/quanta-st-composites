@@ -92,23 +92,53 @@ def load_formulations(level: str) -> dict:
     return json.loads((DATA_ROOT / level.lower() / "composite_formulations.json").read_text())
 
 
-SHORT = {
-    "LANGUAGE_ST_RAW_SUM": "Language verbal sum",
-    "LANGUAGE_ST_SCALED_SUM": "Language verbal sum",
-    "LANGUAGE_ST_NORM_VCI": "Language — VCI",
-    "MEMORY_ST_RAW_AudImm": "Memory — Auditory Imm.",
-    "MEMORY_ST_RAW_VisImm": "Memory — Visual Imm.",
-    "MEMORY_ST_RAW_WorMem": "Memory — Working Memory",
-    "MEMORY_ST_SCALED_AudImm": "Memory — Auditory Imm.",
-    "MEMORY_ST_SCALED_VisImm": "Memory — Visual Imm.",
-    "MEMORY_ST_SCALED_WorMem": "Memory — Working Memory",
-    "MEMORY_ST_NORM_AudImm": "Memory — Auditory Imm.",
-    "MEMORY_ST_NORM_VisImm": "Memory — Visual Imm.",
-    "MEMORY_ST_NORM_WorMem": "Memory — Working Memory",
-    "MOTOR_ST_SCALED_FineMotor": "Motor — Fine Motor",
-    "MOTOR_ST_SCALED_Balance": "Motor — Balance",
-    "MOTOR_ST_SCALED_ProcessingSpeed": "Motor — Processing Speed",
+_SHORT_TAIL = {
+    "VCI": "VCI (composite)",
+    "AudImm": "Auditory Imm. (composite)",
+    "VisImm": "Visual Imm. (composite)",
+    "WorMem": "Working Memory (composite)",
+    "FineMotor": "Fine Motor (composite)",
+    "Balance": "Balance (composite)",
+    "ProcessingSpeed": "Processing Speed (composite)",
+    "BPrestHigh": "BP rest, systolic", "BPrestLow": "BP rest, diastolic",
+    "HRrest": "Heart rate, resting", "WHR": "Waist-hip ratio",
+    "WaisSpeed": "WAIS Processing Speed",
+    "GripMvcL": "Grip MVC (left)", "GripMvcR": "Grip MVC (right)",
+    "LogMemI": "Logical Memory I", "FacI": "Faces I",
+    "VerPairI": "Verbal Paired I", "FamPicI": "Family Pictures I",
+    "LetNumSeq": "Letter-Number Seq.",
+    "SpaForward": "Spatial Span Forward", "SpaBackward": "Spatial Span Backward",
+    "SpaTotal": "Spatial Span Total",
+    "BestLegEyeOpen": "Single leg, eyes open (best)",
+    "WorseLegEyeOpen": "Single leg, eyes open (worse)",
+    "BestLegEyeClose": "Single leg, eyes closed (best)",
+    "WorseLegEyeClose": "Single leg, eyes closed (worse)",
+    "FunctionalReaching": "Functional reaching",
+    "PegboardDominant": "Pegboard (dominant)",
+    "PegboardNondominant": "Pegboard (non-dominant)",
+    "PegboardBoth": "Pegboard (both)",
+    "PegboardAssemble": "Pegboard (assembly)",
+    "SymbolSearch": "Symbol Search", "SymbolCoding": "Symbol Coding",
+    "AerobicRating": "Aerobic rating",
+    "SUM": "Verbal sum", "SIMILARITY": "Similarity",
+    "VOCABULARY": "Vocabulary", "INFORMATION": "Information",
+    "BMI": "BMI",
 }
+_DOMAIN = {"LANGUAGE": "Language", "MEMORY": "Memory", "MOTOR": "Motor"}
+
+
+class _ShortLookup:
+    def get(self, target, default=None):
+        parts = target.split("_", 3)
+        if len(parts) < 4 or parts[1] != "ST":
+            return default if default is not None else target
+        return f"{_DOMAIN.get(parts[0], parts[0])} — {_SHORT_TAIL.get(parts[3], parts[3])}"
+
+    def __getitem__(self, target):
+        return self.get(target, target)
+
+
+SHORT = _ShortLookup()
 
 
 st.title("Quanta — predicting standardised-test composites from brain & behaviour")
@@ -240,48 +270,60 @@ with tabs[1]:
 
 # ── tab 3: composite formulation ─────────────────────────────────────────────
 with tabs[2]:
-    st.subheader(f"Composite formulation — {chosen_label} [{chosen_level}]")
-    st.caption(
-        "Linear regression of the target on its publisher-defined component subtests. "
-        "**The components are not model inputs**, only documentation of internal structure. "
-        "RAW and SCALED composites recover at R² ≈ 1.000 (linear weighting); NORM indices "
-        "recover at lower R² because of the publisher's non-linear lookup-table step."
-    )
-    rows = []
-    for tname in target_names:
-        spec = formulations.get(tname, {})
-        rows.append({
-            "Target": SHORT.get(tname, tname),
-            "Components": ", ".join(spec.get("predictors", [])),
-            "OLS R²": f"{spec.get('r2', float('nan')):.3f}",
-            "n": spec.get("n", "-"),
-        })
-    st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch")
-
-    chosen_spec = formulations.get(chosen)
-    if chosen_spec is not None:
-        st.markdown(f"#### Coefficients for **{SHORT.get(chosen, chosen)}**")
-        coef_rows = [{"term": p, "coefficient": c}
-                     for p, c in chosen_spec["coefficients"].items()]
-        cdf = pd.DataFrame(coef_rows)
-        fig = px.bar(
-            cdf, x="coefficient", y="term", orientation="h",
-            text=cdf["coefficient"].map(lambda v: f"{v:+.3f}"),
-            color="coefficient", color_continuous_scale="RdBu_r", color_continuous_midpoint=0,
-            labels={"coefficient": "OLS coefficient", "term": ""},
+    st.subheader(f"Composite formulation — [{chosen_level}]")
+    if not formulations:
+        st.info(
+            f"No composites at the {chosen_level} level — every target is an "
+            "individual subtest or measure, with no publisher-defined decomposition."
         )
-        fig.update_traces(textposition="outside")
-        fig.update_layout(
-            height=max(220, 30 * len(cdf) + 100),
-            coloraxis_showscale=False, margin=dict(l=10, r=10),
-        )
-        st.plotly_chart(fig, width="stretch")
-        st.code(chosen_spec["equation"], language=None)
+    else:
         st.caption(
-            f"Intercept = {chosen_spec['intercept']:+.2f}. "
-            f"Fit on n = {chosen_spec['n']} complete cases. "
-            f"R² = {chosen_spec['r2']:.3f}."
+            "Linear regression of each composite target on its publisher-defined "
+            "component subtests. **The components are not model inputs**, only "
+            "documentation of internal structure. SCALED motor composites recover at "
+            "R² ≈ 1.000 (linear weighting); NORM indices recover at lower R² because "
+            "of the publisher's non-linear lookup-table step."
         )
+        rows = []
+        for tname, spec in formulations.items():
+            rows.append({
+                "Target": SHORT.get(tname, tname),
+                "Components": ", ".join(spec.get("predictors", [])),
+                "OLS R²": f"{spec.get('r2', float('nan')):.3f}",
+                "n": spec.get("n", "-"),
+            })
+        st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch")
+
+        chosen_spec = formulations.get(chosen)
+        if chosen_spec is None:
+            st.info(
+                f"**{SHORT.get(chosen, chosen)}** is not a composite at this level "
+                "— it is an individual subtest / measure. Pick a composite target "
+                "from the sidebar to see its OLS coefficients."
+            )
+        else:
+            st.markdown(f"#### Coefficients for **{SHORT.get(chosen, chosen)}**")
+            coef_rows = [{"term": p, "coefficient": c}
+                         for p, c in chosen_spec["coefficients"].items()]
+            cdf = pd.DataFrame(coef_rows)
+            fig = px.bar(
+                cdf, x="coefficient", y="term", orientation="h",
+                text=cdf["coefficient"].map(lambda v: f"{v:+.3f}"),
+                color="coefficient", color_continuous_scale="RdBu_r", color_continuous_midpoint=0,
+                labels={"coefficient": "OLS coefficient", "term": ""},
+            )
+            fig.update_traces(textposition="outside")
+            fig.update_layout(
+                height=max(220, 30 * len(cdf) + 100),
+                coloraxis_showscale=False, margin=dict(l=10, r=10),
+            )
+            st.plotly_chart(fig, width="stretch")
+            st.code(chosen_spec["equation"], language=None)
+            st.caption(
+                f"Intercept = {chosen_spec['intercept']:+.2f}. "
+                f"Fit on n = {chosen_spec['n']} complete cases. "
+                f"R² = {chosen_spec['r2']:.3f}."
+            )
 
 # ── tab 4: modality ablation ─────────────────────────────────────────────────
 with tabs[3]:

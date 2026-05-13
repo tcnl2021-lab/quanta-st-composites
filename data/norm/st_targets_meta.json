@@ -5,19 +5,46 @@
   "n_test": 86,
   "targets": [
     "LANGUAGE_ST_NORM_VCI",
+    "LANGUAGE_ST_NORM_SIMILARITY",
+    "LANGUAGE_ST_NORM_VOCABULARY",
+    "LANGUAGE_ST_NORM_INFORMATION",
     "MEMORY_ST_NORM_AudImm",
     "MEMORY_ST_NORM_VisImm",
-    "MEMORY_ST_NORM_WorMem"
+    "MEMORY_ST_NORM_WorMem",
+    "MOTOR_ST_NORM_BMI",
+    "MOTOR_ST_NORM_WHR",
+    "MOTOR_ST_NORM_AerobicRating",
+    "MOTOR_ST_NORM_FunctionalReaching",
+    "MOTOR_ST_NORM_BestLegEyeClose",
+    "MOTOR_ST_NORM_PegboardDominant",
+    "MOTOR_ST_NORM_PegboardNondominant",
+    "MOTOR_ST_NORM_PegboardBoth",
+    "MOTOR_ST_NORM_PegboardAssemble",
+    "MOTOR_ST_NORM_WaisSpeed"
   ],
   "missingness_per_target": {
     "LANGUAGE_ST_NORM_VCI": 0.0,
+    "LANGUAGE_ST_NORM_SIMILARITY": 0.0,
+    "LANGUAGE_ST_NORM_VOCABULARY": 0.0,
+    "LANGUAGE_ST_NORM_INFORMATION": 0.0,
     "MEMORY_ST_NORM_AudImm": 0.00468384074941452,
     "MEMORY_ST_NORM_VisImm": 0.00468384074941452,
-    "MEMORY_ST_NORM_WorMem": 0.00468384074941452
+    "MEMORY_ST_NORM_WorMem": 0.00468384074941452,
+    "MOTOR_ST_NORM_BMI": 0.0117096018735363,
+    "MOTOR_ST_NORM_WHR": 0.0117096018735363,
+    "MOTOR_ST_NORM_AerobicRating": 0.03747072599531616,
+    "MOTOR_ST_NORM_FunctionalReaching": 0.0117096018735363,
+    "MOTOR_ST_NORM_BestLegEyeClose": 0.03278688524590164,
+    "MOTOR_ST_NORM_PegboardDominant": 0.0117096018735363,
+    "MOTOR_ST_NORM_PegboardNondominant": 0.0117096018735363,
+    "MOTOR_ST_NORM_PegboardBoth": 0.0117096018735363,
+    "MOTOR_ST_NORM_PegboardAssemble": 0.0117096018735363,
+    "MOTOR_ST_NORM_WaisSpeed": 0.0117096018735363
   },
   "dropped_candidates": {
-    "MEMORY_ST_NORM_ImmMem": "linear in AudImm + VisImm (R^2 = 0.996)",
-    "LANGUAGE_ST_NORM_PR": "monotone percentile transform of VCI (R^2 = 0.87)"
+    "MEMORY_ST_NORM_ImmMem": "exact = AudImm + VisImm (R^2 = 0.996)",
+    "LANGUAGE_ST_NORM_PR": "monotone percentile transform of VCI (R^2 = 0.87)",
+    "MOTOR_ST_NORM_PegboardSum": "exact = Dom + NonDom + Both (R^2 = 1.000)"
   },
   "source_clean_csv": "/media/DATA3/Quanta/Data/DATA_ses-01_cleaned.csv",
   "source_split_npz": "/media/DATA3/Quanta_heldout/codes/brain_age_2026/tuning/cache/holdout_split.npz"
