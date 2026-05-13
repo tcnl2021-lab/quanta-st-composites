@@ -98,12 +98,18 @@ def load_meta() -> dict:
     return json.loads((DATA / "st_targets_meta.json").read_text())
 
 
+@st.cache_data
+def load_formulations() -> dict:
+    return json.loads((DATA / "composite_formulations.json").read_text())
+
+
 preds, target_names = load_predictions()
 summary = load_summary()
 ablation = load_ablation()
 dev_corr = load_deviation_corr()
 zhang, _ = load_deviation_zhang()
 meta = load_meta()
+formulations = load_formulations()
 
 
 SHORT = {
@@ -121,8 +127,11 @@ target_options = [(SHORT.get(n, n), n) for n in target_names]
 st.title("Quanta — predicting standardised-test composites from brain & behaviour")
 st.caption(
     "Frozen 80/20 split (n_train=341, n_test=86), inherited from the Quanta brain-age "
-    "held-out repo. Seven composite targets, seven modality blocks, per-block RidgeCV → "
-    "RidgeCV meta-stack. Use the sidebar to pick a target; tabs drill into the prediction, "
+    "held-out repo. Seven composite targets (read verbatim from the publisher-scored "
+    "phenotype file), seven modality blocks — BEH · EEG · MRI · DTI · DL · FC · SEX. "
+    "**Chronological age is intentionally excluded** from the features; the targets are "
+    "already publisher-age-normed / age-scaled. Per-block RidgeCV → RidgeCV meta-stack. "
+    "Use the sidebar to pick a target; tabs drill into the prediction, composite formulation, "
     "modality contribution, and external-validity (Zhang-corrected deviation) views."
 )
 
@@ -157,6 +166,7 @@ c5.metric("n_test with y", f"{int(row['n_test_with_y'])}/86")
 tabs = st.tabs([
     "Predicted vs true",
     "Per-target overview",
+    "Composite formulation",
     "Modality ablation",
     "Deviation correlations",
     "About",
@@ -218,8 +228,66 @@ with tabs[1]:
     fig.update_layout(height=380, coloraxis_showscale=False, margin=dict(l=10, r=10))
     st.plotly_chart(fig, width="stretch")
 
-# ── tab 3 ────────────────────────────────────────────────────────────────────
+# ── tab 3: Composite formulation ─────────────────────────────────────────────
 with tabs[2]:
+    st.subheader(f"Composite formulation — {chosen_label}")
+    st.caption(
+        "What does the target actually sum? Each composite is computed by the test "
+        "publisher from underlying subtests. The table below regresses every target on "
+        "its plausible component subtests so the implicit formulation is visible. "
+        "**These component subtests are never inputs to the held-out prediction model** — "
+        "they are documented here only to make the targets' internal structure explicit. "
+        "Motor composites recover at R² = 1.000 (linear weighting); WAIS / WMS norm "
+        "indices recover at R² = 0.25–0.72 because the publishers' raw → scaled → norm "
+        "transformation uses a non-linear lookup table."
+    )
+
+    rows = []
+    for tname in target_names:
+        spec = formulations.get(tname)
+        if spec is None:
+            continue
+        rows.append({
+            "Target": SHORT.get(tname, tname),
+            "Components": ", ".join(spec["predictors"]),
+            "OLS R²": f"{spec['r2']:.3f}",
+            "Equation": spec["equation"].split("≈ ", 1)[-1] if "≈" in spec["equation"] else spec["equation"],
+            "n": spec["n"],
+        })
+    st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch")
+
+    chosen_spec = formulations.get(chosen)
+    if chosen_spec is not None:
+        st.markdown(f"#### Coefficients for **{SHORT.get(chosen, chosen)}**")
+        coef_rows = [{"term": "(intercept)", "coefficient": chosen_spec["intercept"]}]
+        coef_rows += [
+            {"term": p, "coefficient": c}
+            for p, c in chosen_spec["coefficients"].items()
+        ]
+        cdf = pd.DataFrame(coef_rows)
+        nonintercept = cdf.iloc[1:].copy()
+        fig = px.bar(
+            nonintercept,
+            x="coefficient", y="term", orientation="h",
+            text=nonintercept["coefficient"].map(lambda v: f"{v:+.3f}"),
+            color="coefficient", color_continuous_scale="RdBu_r", color_continuous_midpoint=0,
+            labels={"coefficient": "OLS coefficient", "term": ""},
+        )
+        fig.update_traces(textposition="outside")
+        fig.update_layout(
+            height=max(260, 30 * len(nonintercept) + 100),
+            coloraxis_showscale=False, margin=dict(l=10, r=10),
+        )
+        st.plotly_chart(fig, width="stretch")
+        st.code(chosen_spec["equation"], language=None)
+        st.caption(
+            f"Fit on n = {chosen_spec['n']} complete cases. "
+            f"R² = {chosen_spec['r2']:.3f}. "
+            "Source: `analyze_composite_formulations.py`."
+        )
+
+# ── tab 4: Modality ablation ─────────────────────────────────────────────────
+with tabs[3]:
     st.subheader(f"Modality block ablation — {chosen_label}")
     st.caption(
         "Δ MAE relative to the full 7-block stack. Positive bars = removing that block "
@@ -252,8 +320,8 @@ with tabs[2]:
     with st.expander("Full ablation table (all targets × blocks)"):
         st.dataframe(ablation, hide_index=True, width="stretch")
 
-# ── tab 4 ────────────────────────────────────────────────────────────────────
-with tabs[3]:
+# ── tab 5: Deviation correlations ────────────────────────────────────────────
+with tabs[4]:
     st.subheader(f"Zhang-corrected deviation correlations — {chosen_label}")
     st.caption(
         "Per-subject (pred − bias-corrected reference) deviation correlated against the "
@@ -320,8 +388,8 @@ with tabs[3]:
     with st.expander("Correlation table"):
         st.dataframe(disp, hide_index=True, width="stretch")
 
-# ── tab 5 ────────────────────────────────────────────────────────────────────
-with tabs[4]:
+# ── tab 6: About ─────────────────────────────────────────────────────────────
+with tabs[5]:
     st.subheader("About this demo")
     st.markdown(
         """
@@ -331,18 +399,24 @@ with tabs[4]:
         functional connectivity, and pretrained deep-feature scalars (SFCN +
         Pyment).
 
-        **Targets.** Seven composite scores from the standardized cognitive and
-        motor batteries — drawn from the test-publisher canonical
-        norm/scaled indices. Targets that were exact or near-exact linear
-        combinations of the kept set were dropped before modelling
-        (`MEMORY_ST_NORM_ImmMem`, `LANGUAGE_ST_SCALED_SUM`,
+        **Targets.** Seven composite scores read verbatim from the cleaned
+        Quanta phenotype CSV — they are the test-publisher canonical norm/scaled
+        indices (we do not compute the composites ourselves). The "Composite
+        formulation" tab reverse-engineers each index from its component
+        subtests to show what it actually sums. Targets that were exact or
+        near-exact linear combinations of the kept set were dropped before
+        modelling (`MEMORY_ST_NORM_ImmMem`, `LANGUAGE_ST_SCALED_SUM`,
         `LANGUAGE_ST_RAW_SUM`, `LANGUAGE_ST_NORM_PR`).
 
         **Model.** Per-block RidgeCV base learners produce out-of-fold
         predictions on the 341 train subjects and direct predictions on the 86
-        held-out subjects. A RidgeCV meta-learner stacks the seven OOF columns
-        into the final score. Each target is fit independently. No `_ST_` or
-        `_Q_` feature is ever an input.
+        held-out subjects across **seven blocks: BEH · EEG · MRI · DTI · DL ·
+        FC · SEX**. A RidgeCV meta-learner stacks the seven OOF columns into
+        the final score. Each target is fit independently. No `_ST_` or `_Q_`
+        feature is ever an input. **Chronological age is intentionally excluded
+        from the features** — the composite targets are already publisher-age-
+        normed or age-scaled, so the residual prediction should reflect brain +
+        behaviour + sex contributions only.
 
         **Split.** Inherited verbatim from the brain-age held-out repo: 80/20
         age × sex stratified, frozen ahead of the final run. Train-fitted
