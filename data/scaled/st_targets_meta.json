@@ -1,0 +1,29 @@
+{
+  "level": "SCALED",
+  "n_subjects": 427,
+  "n_train": 341,
+  "n_test": 86,
+  "targets": [
+    "LANGUAGE_ST_SCALED_SUM",
+    "MEMORY_ST_SCALED_AudImm",
+    "MEMORY_ST_SCALED_VisImm",
+    "MEMORY_ST_SCALED_WorMem",
+    "MOTOR_ST_SCALED_FineMotor",
+    "MOTOR_ST_SCALED_Balance",
+    "MOTOR_ST_SCALED_ProcessingSpeed"
+  ],
+  "missingness_per_target": {
+    "LANGUAGE_ST_SCALED_SUM": 0.0,
+    "MEMORY_ST_SCALED_AudImm": 0.00468384074941452,
+    "MEMORY_ST_SCALED_VisImm": 0.00468384074941452,
+    "MEMORY_ST_SCALED_WorMem": 0.00468384074941452,
+    "MOTOR_ST_SCALED_FineMotor": 0.00936768149882904,
+    "MOTOR_ST_SCALED_Balance": 0.03278688524590164,
+    "MOTOR_ST_SCALED_ProcessingSpeed": 0.00936768149882904
+  },
+  "dropped_candidates": {
+    "MEMORY_ST_SCALED_ImmMem": "linear in AudImm + VisImm (R^2 = 1.000)"
+  },
+  "source_clean_csv": "/media/DATA3/Quanta/Data/DATA_ses-01_cleaned.csv",
+  "source_split_npz": "/media/DATA3/Quanta_heldout/codes/brain_age_2026/tuning/cache/holdout_split.npz"
+}

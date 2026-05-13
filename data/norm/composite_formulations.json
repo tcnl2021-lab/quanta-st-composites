@@ -1,0 +1,68 @@
+{
+  "LANGUAGE_ST_NORM_VCI": {
+    "level": "NORM",
+    "description": "WAIS VCI norm-table index over the three scaled subtests",
+    "predictors": [
+      "LANGUAGE_ST_SCALED_SIMILARITY",
+      "LANGUAGE_ST_SCALED_VOCABULARY",
+      "LANGUAGE_ST_SCALED_INFORMATION"
+    ],
+    "intercept": 64.93043141127791,
+    "coefficients": {
+      "LANGUAGE_ST_SCALED_SIMILARITY": 0.13970519096311673,
+      "LANGUAGE_ST_SCALED_VOCABULARY": 0.4009804704657588,
+      "LANGUAGE_ST_SCALED_INFORMATION": 0.24385280633102285
+    },
+    "r2": 0.7165762908498674,
+    "n": 452,
+    "equation": "LANGUAGE_ST_NORM_VCI \u2248 +64.93 +0.140 \u00b7 LANGUAGE_ST_SCALED_SIMILARITY +0.401 \u00b7 LANGUAGE_ST_SCALED_VOCABULARY +0.244 \u00b7 LANGUAGE_ST_SCALED_INFORMATION"
+  },
+  "MEMORY_ST_NORM_AudImm": {
+    "level": "NORM",
+    "description": "Auditory Immediate norm-index over scaled subtests",
+    "predictors": [
+      "MEMORY_ST_SCALED_LogMemI",
+      "MEMORY_ST_SCALED_VerPairI"
+    ],
+    "intercept": 77.5990259287731,
+    "coefficients": {
+      "MEMORY_ST_SCALED_LogMemI": 0.29156154173905346,
+      "MEMORY_ST_SCALED_VerPairI": 0.19407454723032608
+    },
+    "r2": 0.36971561327410996,
+    "n": 425,
+    "equation": "MEMORY_ST_NORM_AudImm \u2248 +77.60 +0.292 \u00b7 MEMORY_ST_SCALED_LogMemI +0.194 \u00b7 MEMORY_ST_SCALED_VerPairI"
+  },
+  "MEMORY_ST_NORM_VisImm": {
+    "level": "NORM",
+    "description": "Visual Immediate norm-index over scaled subtests",
+    "predictors": [
+      "MEMORY_ST_SCALED_FacI",
+      "MEMORY_ST_SCALED_FamPicI"
+    ],
+    "intercept": 53.61116135308039,
+    "coefficients": {
+      "MEMORY_ST_SCALED_FacI": 0.49048483126479037,
+      "MEMORY_ST_SCALED_FamPicI": 0.2814169028426627
+    },
+    "r2": 0.25153597526581406,
+    "n": 425,
+    "equation": "MEMORY_ST_NORM_VisImm \u2248 +53.61 +0.490 \u00b7 MEMORY_ST_SCALED_FacI +0.281 \u00b7 MEMORY_ST_SCALED_FamPicI"
+  },
+  "MEMORY_ST_NORM_WorMem": {
+    "level": "NORM",
+    "description": "Working Memory norm-index over scaled subtests",
+    "predictors": [
+      "MEMORY_ST_SCALED_LetNumSeq",
+      "MEMORY_ST_SCALED_SpaTotal"
+    ],
+    "intercept": 69.92062991466636,
+    "coefficients": {
+      "MEMORY_ST_SCALED_LetNumSeq": 0.3689580539645907,
+      "MEMORY_ST_SCALED_SpaTotal": 0.37004951912532946
+    },
+    "r2": 0.3935633245233646,
+    "n": 425,
+    "equation": "MEMORY_ST_NORM_WorMem \u2248 +69.92 +0.369 \u00b7 MEMORY_ST_SCALED_LetNumSeq +0.370 \u00b7 MEMORY_ST_SCALED_SpaTotal"
+  }
+}

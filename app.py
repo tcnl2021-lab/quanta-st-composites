@@ -1,4 +1,4 @@
-"""Streamlit demo: TCNL Quanta standardised-test composite held-out prediction."""
+"""Streamlit demo: TCNL Quanta ST composite held-out prediction, three score levels."""
 from __future__ import annotations
 
 import json
@@ -11,41 +11,36 @@ import plotly.graph_objects as go
 import streamlit as st
 
 
-DATA = Path(__file__).parent / "data"
+ROOT = Path(__file__).parent
+DATA_ROOT = ROOT / "data"
+LEVELS = ["RAW", "SCALED", "NORM"]
+LEVEL_DESC = {
+    "RAW": "Raw subtest sums — bounded by test ceilings, not age-normed.",
+    "SCALED": "Age-normed scaled scores summed into composites.",
+    "NORM": "Publisher norm-table indices on top of the scaled sums (non-linear lookup).",
+}
 
-st.set_page_config(
-    page_title="Quanta ST-composite prediction",
-    page_icon="🧠",
-    layout="wide",
-)
+
+st.set_page_config(page_title="Quanta ST-composite prediction", page_icon="🧠", layout="wide")
 
 
 @st.cache_data
-def load_predictions() -> tuple[pd.DataFrame, list[str]]:
-    npz = np.load(DATA / "holdout_predictions.npz", allow_pickle=True)
+def load_predictions(level: str) -> tuple[pd.DataFrame, list[str]]:
+    npz = np.load(DATA_ROOT / level.lower() / "holdout_predictions.npz", allow_pickle=True)
     names = list(npz["target_names"])
-    row = npz["subject"].astype(str)  # public artifacts use position labels row-NNN
+    row = npz["subject"].astype(str)
     is_test = npz["is_test"].astype(bool)
     fold = npz["fold_ids"].astype(int)
-    y = npz["y_true"]
-    cv = npz["cv_oof"]
-    te = npz["test_pred"]
+    y = npz["y_true"]; cv = npz["cv_oof"]; te = npz["test_pred"]
     rows = []
     for ti, name in enumerate(names):
         pred = np.where(is_test, te[:, ti], cv[:, ti])
-        rows.append(
-            pd.DataFrame(
-                {
-                    "row": row,
-                    "target": name,
-                    "y_true": y[:, ti],
-                    "pred": pred,
-                    "fold": fold,
-                    "is_test": is_test,
-                    "split": np.where(is_test, "Held-out test (n=86)", "Train CV OOF (n=341)"),
-                }
-            )
-        )
+        rows.append(pd.DataFrame({
+            "row": row, "target": name,
+            "y_true": y[:, ti], "pred": pred,
+            "fold": fold, "is_test": is_test,
+            "split": np.where(is_test, "Held-out test (n=86)", "Train CV OOF (n=341)"),
+        }))
     df = pd.concat(rows, ignore_index=True)
     df["err"] = df["pred"] - df["y_true"]
     df["abs_err"] = df["err"].abs()
@@ -53,112 +48,126 @@ def load_predictions() -> tuple[pd.DataFrame, list[str]]:
 
 
 @st.cache_data
-def load_summary() -> pd.DataFrame:
-    return pd.read_csv(DATA / "holdout_summary.csv")
+def load_summary(level: str) -> pd.DataFrame:
+    return pd.read_csv(DATA_ROOT / level.lower() / "holdout_summary.csv")
 
 
 @st.cache_data
-def load_ablation() -> pd.DataFrame:
-    return pd.read_csv(DATA / "modality_ablation.csv")
+def load_ablation(level: str) -> pd.DataFrame:
+    return pd.read_csv(DATA_ROOT / level.lower() / "modality_ablation.csv")
 
 
 @st.cache_data
-def load_deviation_corr() -> pd.DataFrame:
-    return pd.read_csv(DATA / "deviation_correlations.csv")
+def load_deviation_corr(level: str) -> pd.DataFrame:
+    return pd.read_csv(DATA_ROOT / level.lower() / "deviation_correlations.csv")
 
 
 @st.cache_data
-def load_deviation_zhang() -> tuple[pd.DataFrame, list[str]]:
-    npz = np.load(DATA / "deviation_zhang.npz", allow_pickle=True)
+def load_deviation_zhang(level: str) -> tuple[pd.DataFrame, list[str]]:
+    npz = np.load(DATA_ROOT / level.lower() / "deviation_zhang.npz", allow_pickle=True)
     names = list(npz["target_names"])
-    row = npz["subject"].astype(str)  # public artifacts use position labels row-NNN
+    row = npz["subject"].astype(str)
     is_test = npz["is_test"].astype(bool)
     fold = npz["fold_ids"].astype(int)
     rows = []
     for ti, name in enumerate(names):
-        rows.append(
-            pd.DataFrame(
-                {
-                    "row": row,
-                    "target": name,
-                    "y_true": npz["y_true"][:, ti],
-                    "pred": npz["pred_full"][:, ti],
-                    "deviation_zhang": npz["deviation"][:, ti],
-                    "fold": fold,
-                    "is_test": is_test,
-                    "split": np.where(is_test, "Held-out test (n=86)", "Train CV OOF (n=341)"),
-                }
-            )
-        )
+        rows.append(pd.DataFrame({
+            "row": row, "target": name,
+            "y_true": npz["y_true"][:, ti],
+            "pred": npz["pred_full"][:, ti],
+            "deviation_zhang": npz["deviation"][:, ti],
+            "fold": fold, "is_test": is_test,
+            "split": np.where(is_test, "Held-out test (n=86)", "Train CV OOF (n=341)"),
+        }))
     return pd.concat(rows, ignore_index=True), names
 
 
 @st.cache_data
-def load_meta() -> dict:
-    return json.loads((DATA / "st_targets_meta.json").read_text())
+def load_meta(level: str) -> dict:
+    return json.loads((DATA_ROOT / level.lower() / "st_targets_meta.json").read_text())
 
 
 @st.cache_data
-def load_formulations() -> dict:
-    return json.loads((DATA / "composite_formulations.json").read_text())
-
-
-preds, target_names = load_predictions()
-summary = load_summary()
-ablation = load_ablation()
-dev_corr = load_deviation_corr()
-zhang, _ = load_deviation_zhang()
-meta = load_meta()
-formulations = load_formulations()
+def load_formulations(level: str) -> dict:
+    return json.loads((DATA_ROOT / level.lower() / "composite_formulations.json").read_text())
 
 
 SHORT = {
+    "LANGUAGE_ST_RAW_SUM": "Language verbal sum",
+    "LANGUAGE_ST_SCALED_SUM": "Language verbal sum",
     "LANGUAGE_ST_NORM_VCI": "Language — VCI",
-    "MEMORY_ST_NORM_AudImm": "Memory — Auditory Immediate",
-    "MEMORY_ST_NORM_VisImm": "Memory — Visual Immediate",
+    "MEMORY_ST_RAW_AudImm": "Memory — Auditory Imm.",
+    "MEMORY_ST_RAW_VisImm": "Memory — Visual Imm.",
+    "MEMORY_ST_RAW_WorMem": "Memory — Working Memory",
+    "MEMORY_ST_SCALED_AudImm": "Memory — Auditory Imm.",
+    "MEMORY_ST_SCALED_VisImm": "Memory — Visual Imm.",
+    "MEMORY_ST_SCALED_WorMem": "Memory — Working Memory",
+    "MEMORY_ST_NORM_AudImm": "Memory — Auditory Imm.",
+    "MEMORY_ST_NORM_VisImm": "Memory — Visual Imm.",
     "MEMORY_ST_NORM_WorMem": "Memory — Working Memory",
     "MOTOR_ST_SCALED_FineMotor": "Motor — Fine Motor",
     "MOTOR_ST_SCALED_Balance": "Motor — Balance",
     "MOTOR_ST_SCALED_ProcessingSpeed": "Motor — Processing Speed",
 }
-target_options = [(SHORT.get(n, n), n) for n in target_names]
 
 
 st.title("Quanta — predicting standardised-test composites from brain & behaviour")
 st.caption(
-    "Frozen 80/20 split (n_train=341, n_test=86), inherited from the Quanta brain-age "
-    "held-out repo. Seven composite targets (read verbatim from the publisher-scored "
-    "phenotype file), seven modality blocks — BEH · EEG · MRI · DTI · DL · FC · SEX. "
-    "**Chronological age is intentionally excluded** from the features; the targets are "
-    "already publisher-age-normed / age-scaled. Per-block RidgeCV → RidgeCV meta-stack. "
-    "Use the sidebar to pick a target; tabs drill into the prediction, composite formulation, "
-    "modality contribution, and external-validity (Zhang-corrected deviation) views."
+    "Frozen 80/20 split (n_train=341, n_test=86) inherited from the brain-age held-out "
+    "repo. Seven modality blocks (BEH · EEG · MRI · DTI · DL · FC · SEX); chronological "
+    "age is intentionally excluded. The model is fit independently at three score "
+    "levels — RAW, SCALED, NORM — because the publisher's raw → scaled → norm "
+    "transformation is non-linear. Pick a level and a target in the sidebar."
 )
 
 with st.sidebar:
-    st.header("Target composite")
+    st.header("Score level")
+    chosen_level = st.radio(
+        "Level", LEVELS, label_visibility="collapsed",
+        help="RAW = raw subtest sums. SCALED = age-normed scaled-subtest sums. "
+             "NORM = publisher norm-table index on top of the scaled sum.",
+    )
+    st.caption(LEVEL_DESC[chosen_level])
+
+    summary = load_summary(chosen_level)
+    target_names = list(summary["target"])
+    target_options = [(SHORT.get(n, n), n) for n in target_names]
     label_to_name = {lbl: n for (lbl, n) in target_options}
+
+    st.markdown("---")
+    st.header("Target composite")
     chosen_label = st.radio(
-        "Select",
-        list(label_to_name.keys()),
-        label_visibility="collapsed",
+        "Target", list(label_to_name.keys()), label_visibility="collapsed"
     )
     chosen = label_to_name[chosen_label]
+
+    meta = load_meta(chosen_level)
     st.markdown("---")
     st.markdown(
         f"**Cohort.** {meta['n_subjects']} healthy adults, frozen 80/20 split "
         f"({meta['n_train']} train / {meta['n_test']} test)."
     )
-    st.markdown(
-        "**Dropped composites** (linear in kept targets):  \n"
-        + "  \n".join([f"`{k}` — {v}" for k, v in meta["dropped_candidates"].items()])
-    )
+    if meta.get("dropped_candidates"):
+        st.markdown(
+            "**Dropped at this level** (linear in kept targets):  \n"
+            + "  \n".join([f"`{k}` — {v}" for k, v in meta["dropped_candidates"].items()])
+        )
 
-# ── headline ─────────────────────────────────────────────────────────────────
+
+preds, _ = load_predictions(chosen_level)
+ablation = load_ablation(chosen_level)
+dev_corr = load_deviation_corr(chosen_level)
+zhang, _ = load_deviation_zhang(chosen_level)
+formulations = load_formulations(chosen_level)
+
+# ── headline metrics ─────────────────────────────────────────────────────────
 row = summary[summary["target"] == chosen].iloc[0]
 c1, c2, c3, c4, c5 = st.columns(5)
 c1.metric("Train-CV MAE", f"{row['cv_mae']:.2f}", f"± {row['cv_mae_std']:.2f}")
-c2.metric("Held-out MAE", f"{row['test_mae']:.2f}", f"vs mean-baseline {row['test_mae']-row['test_mae_baseline']:+.2f}")
+c2.metric(
+    "Held-out MAE", f"{row['test_mae']:.2f}",
+    f"vs mean-baseline {row['test_mae']-row['test_mae_baseline']:+.2f}",
+)
 c3.metric("Held-out R²", f"{row['test_r2']:.3f}", f"baseline R² {row['test_r2_baseline']:+.3f}")
 c4.metric("Held-out Pearson ρ", f"{row['test_pearson']:.3f}")
 c5.metric("n_test with y", f"{int(row['n_test_with_y'])}/86")
@@ -169,12 +178,13 @@ tabs = st.tabs([
     "Composite formulation",
     "Modality ablation",
     "Deviation correlations",
+    "Compare levels",
     "About",
 ])
 
-# ── tab 1 ────────────────────────────────────────────────────────────────────
+# ── tab 1: predicted vs true ─────────────────────────────────────────────────
 with tabs[0]:
-    st.subheader(f"Predicted vs true — {chosen_label}")
+    st.subheader(f"Predicted vs true — {chosen_label} [{chosen_level}]")
     sub = preds[preds["target"] == chosen].dropna(subset=["y_true", "pred"]).copy()
     lo = float(min(sub["y_true"].min(), sub["pred"].min())) - 3
     hi = float(max(sub["y_true"].max(), sub["pred"].max())) + 3
@@ -201,9 +211,9 @@ with tabs[0]:
     )
     st.plotly_chart(fig, width="stretch")
 
-# ── tab 2 ────────────────────────────────────────────────────────────────────
+# ── tab 2: per-target overview at the chosen level ───────────────────────────
 with tabs[1]:
-    st.subheader("All seven composite targets")
+    st.subheader(f"All targets at level {chosen_level}")
     df = summary.copy()
     df["target_label"] = df["target"].map(SHORT).fillna(df["target"])
     df_disp = df[["target_label", "n_train", "n_test_with_y",
@@ -228,73 +238,59 @@ with tabs[1]:
     fig.update_layout(height=380, coloraxis_showscale=False, margin=dict(l=10, r=10))
     st.plotly_chart(fig, width="stretch")
 
-# ── tab 3: Composite formulation ─────────────────────────────────────────────
+# ── tab 3: composite formulation ─────────────────────────────────────────────
 with tabs[2]:
-    st.subheader(f"Composite formulation — {chosen_label}")
+    st.subheader(f"Composite formulation — {chosen_label} [{chosen_level}]")
     st.caption(
-        "What does the target actually sum? Each composite is computed by the test "
-        "publisher from underlying subtests. The table below regresses every target on "
-        "its plausible component subtests so the implicit formulation is visible. "
-        "**These component subtests are never inputs to the held-out prediction model** — "
-        "they are documented here only to make the targets' internal structure explicit. "
-        "Motor composites recover at R² = 1.000 (linear weighting); WAIS / WMS norm "
-        "indices recover at R² = 0.25–0.72 because the publishers' raw → scaled → norm "
-        "transformation uses a non-linear lookup table."
+        "Linear regression of the target on its publisher-defined component subtests. "
+        "**The components are not model inputs**, only documentation of internal structure. "
+        "RAW and SCALED composites recover at R² ≈ 1.000 (linear weighting); NORM indices "
+        "recover at lower R² because of the publisher's non-linear lookup-table step."
     )
-
     rows = []
     for tname in target_names:
-        spec = formulations.get(tname)
-        if spec is None:
-            continue
+        spec = formulations.get(tname, {})
         rows.append({
             "Target": SHORT.get(tname, tname),
-            "Components": ", ".join(spec["predictors"]),
-            "OLS R²": f"{spec['r2']:.3f}",
-            "Equation": spec["equation"].split("≈ ", 1)[-1] if "≈" in spec["equation"] else spec["equation"],
-            "n": spec["n"],
+            "Components": ", ".join(spec.get("predictors", [])),
+            "OLS R²": f"{spec.get('r2', float('nan')):.3f}",
+            "n": spec.get("n", "-"),
         })
     st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch")
 
     chosen_spec = formulations.get(chosen)
     if chosen_spec is not None:
         st.markdown(f"#### Coefficients for **{SHORT.get(chosen, chosen)}**")
-        coef_rows = [{"term": "(intercept)", "coefficient": chosen_spec["intercept"]}]
-        coef_rows += [
-            {"term": p, "coefficient": c}
-            for p, c in chosen_spec["coefficients"].items()
-        ]
+        coef_rows = [{"term": p, "coefficient": c}
+                     for p, c in chosen_spec["coefficients"].items()]
         cdf = pd.DataFrame(coef_rows)
-        nonintercept = cdf.iloc[1:].copy()
         fig = px.bar(
-            nonintercept,
-            x="coefficient", y="term", orientation="h",
-            text=nonintercept["coefficient"].map(lambda v: f"{v:+.3f}"),
+            cdf, x="coefficient", y="term", orientation="h",
+            text=cdf["coefficient"].map(lambda v: f"{v:+.3f}"),
             color="coefficient", color_continuous_scale="RdBu_r", color_continuous_midpoint=0,
             labels={"coefficient": "OLS coefficient", "term": ""},
         )
         fig.update_traces(textposition="outside")
         fig.update_layout(
-            height=max(260, 30 * len(nonintercept) + 100),
+            height=max(220, 30 * len(cdf) + 100),
             coloraxis_showscale=False, margin=dict(l=10, r=10),
         )
         st.plotly_chart(fig, width="stretch")
         st.code(chosen_spec["equation"], language=None)
         st.caption(
+            f"Intercept = {chosen_spec['intercept']:+.2f}. "
             f"Fit on n = {chosen_spec['n']} complete cases. "
-            f"R² = {chosen_spec['r2']:.3f}. "
-            "Source: `analyze_composite_formulations.py`."
+            f"R² = {chosen_spec['r2']:.3f}."
         )
 
-# ── tab 4: Modality ablation ─────────────────────────────────────────────────
+# ── tab 4: modality ablation ─────────────────────────────────────────────────
 with tabs[3]:
-    st.subheader(f"Modality block ablation — {chosen_label}")
+    st.subheader(f"Modality block ablation — {chosen_label} [{chosen_level}]")
     st.caption(
-        "Δ MAE relative to the full 7-block stack. Positive bars = removing that block "
-        "hurts the fit (the block carried independent signal)."
+        "Δ MAE relative to the full 7-block stack. Positive bars = removing that "
+        "block hurts the fit (the block carried independent signal)."
     )
-    a = ablation[ablation["target"] == chosen].copy()
-    a = a.sort_values("delta_test_mae")
+    a = ablation[ablation["target"] == chosen].copy().sort_values("delta_test_mae")
     fig = px.bar(
         a, x="delta_test_mae", y="dropped_block", orientation="h",
         text=a["delta_test_mae"].map(lambda v: f"{v:+.3f}"),
@@ -317,16 +313,16 @@ with tabs[3]:
     cv_fig.update_layout(height=380, coloraxis_showscale=False)
     st.plotly_chart(cv_fig, width="stretch")
 
-    with st.expander("Full ablation table (all targets × blocks)"):
+    with st.expander(f"Full {chosen_level} ablation table (all targets × blocks)"):
         st.dataframe(ablation, hide_index=True, width="stretch")
 
-# ── tab 5: Deviation correlations ────────────────────────────────────────────
+# ── tab 5: deviation correlations ────────────────────────────────────────────
 with tabs[4]:
-    st.subheader(f"Zhang-corrected deviation correlations — {chosen_label}")
+    st.subheader(f"Zhang-corrected deviation correlations — {chosen_label} [{chosen_level}]")
     st.caption(
         "Per-subject (pred − bias-corrected reference) deviation correlated against the "
-        "30 BASIC_Q_* questionnaire columns and the 70 unused _ST_ measures. "
-        "Significance flag uses Benjamini-Hochberg FDR across the 100 features tested per target."
+        "30 BASIC_Q_* questionnaire columns and the unused _ST_ measures. "
+        "Significance flag uses Benjamini-Hochberg FDR across the features tested per target."
     )
 
     z = zhang[zhang["target"] == chosen].dropna(subset=["deviation_zhang", "y_true"])
@@ -362,8 +358,7 @@ with tabs[4]:
     pick = st.radio("Filter", ["FDR-significant", "All"], horizontal=True)
     filt = corr[corr["sig"]] if pick == "FDR-significant" else corr
     cat_pick = st.multiselect(
-        "Category",
-        sorted(corr["category"].unique()),
+        "Category", sorted(corr["category"].unique()),
         default=sorted(corr["category"].unique()),
     )
     filt = filt[filt["category"].isin(cat_pick)].sort_values("pearson_r")
@@ -388,8 +383,47 @@ with tabs[4]:
     with st.expander("Correlation table"):
         st.dataframe(disp, hide_index=True, width="stretch")
 
-# ── tab 6: About ─────────────────────────────────────────────────────────────
+# ── tab 6: cross-level comparison ────────────────────────────────────────────
 with tabs[5]:
+    st.subheader("Cross-level comparison")
+    st.caption(
+        "Held-out R² of every target at every level, side-by-side. Targets shown at a "
+        "level for which they exist; LANGUAGE has SUM at RAW & SCALED and VCI at NORM; "
+        "MOTOR composites only exist at SCALED."
+    )
+    rows = []
+    for lvl in LEVELS:
+        s = load_summary(lvl)
+        for _, r in s.iterrows():
+            rows.append({
+                "level": lvl,
+                "target": SHORT.get(r["target"], r["target"]),
+                "target_raw": r["target"],
+                "test_r2": r["test_r2"],
+                "test_mae": r["test_mae"],
+                "test_pearson": r["test_pearson"],
+                "test_mae_baseline": r["test_mae_baseline"],
+            })
+    df_all = pd.DataFrame(rows)
+
+    fig = px.bar(
+        df_all, x="test_r2", y="target", color="level", barmode="group",
+        orientation="h",
+        text=df_all["test_r2"].map(lambda v: f"{v:.2f}"),
+        labels={"test_r2": "Held-out R²", "target": ""},
+        color_discrete_map={"RAW": "#8aab8d", "SCALED": "#a47bb5", "NORM": "#7aa6c2"},
+    )
+    fig.update_traces(textposition="outside")
+    fig.update_layout(height=520, margin=dict(l=10, r=10))
+    st.plotly_chart(fig, width="stretch")
+
+    st.markdown("**Side-by-side table**")
+    pivot = df_all.pivot_table(index="target", columns="level", values="test_r2", aggfunc="first")
+    pivot = pivot.reindex(columns=LEVELS).round(3)
+    st.dataframe(pivot, width="stretch")
+
+# ── tab 7: about ─────────────────────────────────────────────────────────────
+with tabs[6]:
     st.subheader("About this demo")
     st.markdown(
         """
@@ -399,14 +433,14 @@ with tabs[5]:
         functional connectivity, and pretrained deep-feature scalars (SFCN +
         Pyment).
 
-        **Targets.** Seven composite scores read verbatim from the cleaned
-        Quanta phenotype CSV — they are the test-publisher canonical norm/scaled
-        indices (we do not compute the composites ourselves). The "Composite
-        formulation" tab reverse-engineers each index from its component
-        subtests to show what it actually sums. Targets that were exact or
-        near-exact linear combinations of the kept set were dropped before
-        modelling (`MEMORY_ST_NORM_ImmMem`, `LANGUAGE_ST_SCALED_SUM`,
-        `LANGUAGE_ST_RAW_SUM`, `LANGUAGE_ST_NORM_PR`).
+        **Targets.** Composite scores read verbatim from the cleaned Quanta
+        phenotype CSV. The model is fit independently at three score levels —
+        RAW, SCALED, NORM — because the publisher's transformations between
+        them are non-linear and the levels carry slightly different
+        signal-to-noise. The "Composite formulation" tab reverse-engineers each
+        target from its component subtests so the internal structure is
+        explicit. At every level, composites that are exact linear combinations
+        of the others kept at that level are dropped (e.g. `MEMORY_*_ImmMem`).
 
         **Model.** Per-block RidgeCV base learners produce out-of-fold
         predictions on the 341 train subjects and direct predictions on the 86
@@ -415,21 +449,18 @@ with tabs[5]:
         the final score. Each target is fit independently. No `_ST_` or `_Q_`
         feature is ever an input. **Chronological age is intentionally excluded
         from the features** — the composite targets are already publisher-age-
-        normed or age-scaled, so the residual prediction should reflect brain +
-        behaviour + sex contributions only.
+        normed or age-scaled.
 
         **Split.** Inherited verbatim from the brain-age held-out repo: 80/20
         age × sex stratified, frozen ahead of the final run. Train-fitted
         means impute missing features. rs-fMRI FC is reduced to 50 PCs fit on
         the training subjects only.
-
-        **What this demo is not.** No raw subject features ship with the repo.
-        Only de-identified position-indexed prediction vectors, the run summary
-        CSV/JSON, the modality ablation TSV, and the per-target Zhang-corrected
-        deviation correlations are included.
         """
     )
     st.markdown(
-        "**Source:** `tcnl2021-lab/quanta-st-composites` (preparing for public upload). "
-        "Working repo: internal `Quanta_st_composites`."
+        "**Source:** `tcnl2021-lab/quanta-st-composites` (public). "
+        "Working repo: internal `Quanta_st_composites`. "
+        "No raw subject features ship — only de-identified position-indexed "
+        "prediction vectors, per-level metrics, ablation, formulations, and "
+        "deviation correlations."
     )

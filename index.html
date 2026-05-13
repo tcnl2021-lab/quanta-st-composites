@@ -6,96 +6,65 @@
 <title>Standardised-test composite prediction — TCNL Lab</title>
 <style>
   :root {
-    --ink: #1d2530;
-    --fade: #5b6470;
-    --card: #f7f7f3;
-    --accent: #5a6c80;
-    --rule: #dcdcd6;
-    --hover: #eef2f6;
-    --good: #6ea88a;
+    --ink: #1d2530; --fade: #5b6470; --card: #f7f7f3;
+    --accent: #5a6c80; --rule: #dcdcd6; --hover: #eef2f6; --good: #6ea88a;
   }
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-                 "Helvetica Neue", Arial, sans-serif;
-    color: var(--ink);
-    max-width: 820px;
-    margin: 3rem auto 6rem;
-    padding: 0 1.4rem;
-    line-height: 1.55;
-    background: #fcfcfa;
+                 "Helvetica Neue", "PingFang TC", "Noto Sans TC",
+                 "Microsoft JhengHei", Arial, sans-serif;
+    color: var(--ink); max-width: 880px; margin: 3rem auto 6rem;
+    padding: 0 1.4rem; line-height: 1.55; background: #fcfcfa;
   }
   h1 { font-size: 1.85rem; margin: 0 0 0.25rem; letter-spacing: -0.01em; }
-  h2 { font-size: 1.1rem; margin: 2.2rem 0 0.6rem; letter-spacing: -0.005em; }
-  .tag {
-    display: inline-block; font-size: 0.72rem;
-    background: var(--accent); color: white;
-    padding: 2px 7px; border-radius: 3px;
-    letter-spacing: 0.02em; margin-bottom: 0.55rem;
-  }
+  h2 { font-size: 1.2rem; margin: 2.4rem 0 0.6rem; letter-spacing: -0.005em;
+       padding-top: 0.4rem; border-top: 2px solid var(--accent); }
+  h3 { font-size: 0.98rem; margin: 1.4rem 0 0.5rem; color: var(--fade);
+       text-transform: uppercase; letter-spacing: 0.04em; }
+  .tag { display: inline-block; font-size: 0.72rem;
+         background: var(--accent); color: white; padding: 2px 7px;
+         border-radius: 3px; letter-spacing: 0.02em; margin-bottom: 0.55rem; }
   .subtitle { color: var(--fade); font-size: 0.96rem; margin: 0 0 2rem; }
-
-  .targets {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 1.0rem 0 1.6rem;
-    font-size: 0.92rem;
-  }
-  .targets th, .targets td {
-    padding: 0.45rem 0.6rem;
-    border-bottom: 1px solid var(--rule);
-    text-align: right;
-    font-variant-numeric: tabular-nums;
-  }
+  .targets { width: 100%; border-collapse: collapse;
+             margin: 0.6rem 0 1.4rem; font-size: 0.9rem; }
+  .targets th, .targets td { padding: 0.42rem 0.55rem;
+             border-bottom: 1px solid var(--rule); text-align: right;
+             font-variant-numeric: tabular-nums; }
   .targets th:first-child, .targets td:first-child { text-align: left; }
-  .targets th { color: var(--fade); font-weight: 500; font-size: 0.82rem;
-                text-transform: uppercase; letter-spacing: 0.03em; }
-  .targets tr.head td { font-weight: 600; }
-
-  .cta {
-    display: inline-block; background: var(--accent); color: white;
-    padding: 0.65rem 1.15rem; border-radius: 6px;
-    text-decoration: none; font-size: 0.95rem; font-weight: 500;
-    margin-top: 0.4rem;
-    transition: background 0.15s, transform 0.15s;
-  }
+  .targets th { color: var(--fade); font-weight: 500; font-size: 0.78rem;
+                letter-spacing: 0.03em; }
+  .cta { display: inline-block; background: var(--accent); color: white;
+         padding: 0.65rem 1.15rem; border-radius: 6px; text-decoration: none;
+         font-size: 0.95rem; font-weight: 500; margin-top: 0.4rem;
+         transition: background 0.15s, transform 0.15s; }
   .cta:hover { background: #475765; transform: translateY(-1px); }
   .cta .arrow { margin-left: 0.4rem; }
-
   p { margin: 0.6rem 0; }
-  ul { padding-left: 1.2rem; }
-  li { margin: 0.25rem 0; }
   code { background: var(--card); padding: 1px 5px; border-radius: 3px;
-         font-size: 0.88em; }
+         font-size: 0.86em; }
   a { color: #356ea6; }
-
-  footer {
-    margin-top: 3rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--rule);
-    font-size: 0.82rem;
-    color: var(--fade);
-  }
-
-  .badge {
-    display: inline-flex; align-items: center; gap: 6px;
-    font-size: 0.78rem; color: #4a5663;
-    background: #eef1ee; border: 1px solid var(--rule);
-    padding: 3px 10px; border-radius: 999px;
-    font-family: ui-monospace, "SF Mono", Menlo, monospace;
-    font-variant-numeric: tabular-nums;
-  }
-  .badge::before {
-    content: ""; width: 6px; height: 6px;
-    border-radius: 50%; background: var(--good); display: inline-block;
-  }
-  .small { font-size: 0.82rem; color: var(--fade); }
-  .topbar {
-    display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
-    font-size: 0.82rem; color: var(--fade);
-    margin: 0 0 1.4rem;
-  }
+  footer { margin-top: 3rem; padding-top: 1rem;
+           border-top: 1px solid var(--rule); font-size: 0.82rem;
+           color: var(--fade); }
+  .badge { display: inline-flex; align-items: center; gap: 6px;
+           font-size: 0.78rem; color: #4a5663; background: #eef1ee;
+           border: 1px solid var(--rule); padding: 3px 10px;
+           border-radius: 999px;
+           font-family: ui-monospace, "SF Mono", Menlo, monospace;
+           font-variant-numeric: tabular-nums; }
+  .badge::before { content: ""; width: 6px; height: 6px;
+           border-radius: 50%; background: var(--good); display: inline-block; }
+  .small { font-size: 0.84rem; color: var(--fade); }
+  .topbar { display: flex; justify-content: space-between; gap: 1rem;
+            flex-wrap: wrap; font-size: 0.82rem; color: var(--fade);
+            margin: 0 0 1.4rem; }
   .topbar a { color: #356ea6; text-decoration: none; }
   .topbar a:hover { text-decoration: underline; }
+  .jumpnav { display: flex; gap: 0.4rem; margin: 0.6rem 0 2rem; flex-wrap: wrap; }
+  .jumpnav a { background: var(--card); border: 1px solid var(--rule);
+               padding: 4px 12px; border-radius: 6px; text-decoration: none;
+               color: var(--ink); font-size: 0.86rem; font-weight: 500; }
+  .jumpnav a:hover { background: var(--hover); }
 </style>
 </head>
 <body>
@@ -110,206 +79,78 @@
 <p class="subtitle">
   Sibling repo to the TCNL Quanta multimodal brain-age stack (n = 427). Same
   frozen 80/20 age × sex stratified split (341 train / 86 held-out), same
-  modality blocks — but the targets are seven cognitive and motor composite
-  scores (WAIS Verbal Comprehension Index, three Wechsler memory indices,
-  and three motor composites) instead of chronological age.
+  modality blocks — but the targets are composite cognitive and motor
+  scores instead of chronological age.
   <strong>Chronological age is intentionally excluded from the feature set</strong>
-  so the residual prediction reflects only brain + behaviour + sex; the
-  composite targets are already age-normed / age-scaled by their test
-  publishers.
+  (the targets are already publisher-age-normed / age-scaled).
+  The model is run independently at three score levels — RAW, SCALED, and
+  NORM — because the publisher's raw → scaled → norm transformation is
+  non-linear and the three carry slightly different signal-to-noise.
 </p>
 
 <p>
-  <a class="cta" href="https://quanta-st-composites.streamlit.app/">
-    Launch interactive demo<span class="arrow">→</span>
-  </a>
+  <a class="cta" href="https://quanta-st-composites.streamlit.app/">Launch interactive demo<span class="arrow">→</span></a>
   <span class="badge" style="margin-left:0.6rem">live on Streamlit Cloud</span>
 </p>
 
-<h2>Held-out results</h2>
-<table class="targets">
-  <thead>
-    <tr>
-      <th>Composite</th>
-      <th>CV MAE</th>
-      <th>Test MAE</th>
-      <th>Test R²</th>
-      <th>Test ρ</th>
-      <th>Δ vs baseline</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr><td>Motor — Processing Speed</td><td>6.95</td><td>7.14</td><td><b>0.579</b></td><td><b>0.761</b></td><td>-4.25</td></tr>
-    <tr><td>Motor — Fine Motor</td><td>6.43</td><td>5.30</td><td><b>0.549</b></td><td><b>0.745</b></td><td>-2.89</td></tr>
-    <tr><td>Motor — Balance</td><td>12.27</td><td>10.97</td><td><b>0.476</b></td><td><b>0.697</b></td><td>-5.70</td></tr>
-    <tr><td>Memory — Visual Immediate</td><td>10.86</td><td>11.73</td><td>0.225</td><td>0.550</td><td>-1.51</td></tr>
-    <tr><td>Language — VCI</td><td>9.74</td><td>10.14</td><td>0.156</td><td>0.431</td><td>-1.00</td></tr>
-    <tr><td>Memory — Auditory Immediate</td><td>9.91</td><td>10.29</td><td>0.088</td><td>0.389</td><td>-0.91</td></tr>
-    <tr><td>Memory — Working Memory</td><td>10.01</td><td>9.25</td><td>0.083</td><td>0.301</td><td>-0.88</td></tr>
-  </tbody>
-</table>
+<nav class="jumpnav">
+  <a href="#raw">RAW</a>
+  <a href="#scaled">SCALED</a>
+  <a href="#norm">NORM</a>
+</nav>
+
 <p class="small">
-  CV MAE: 5-fold cross-validated MAE on the 341 training subjects.
-  Baseline = training-mean predictor; Δ is held-out MAE minus that baseline.
-  All seven targets beat the training-mean baseline on the held-out 86.
+  All seven blocks of features are shared across levels: <code>BEH (199)</code> ·
+  <code>EEG + PSD (659)</code> · <code>MRI (1094)</code> · <code>DTI ROI (90)</code> ·
+  <code>DL SFCN+Pyment (71)</code> · <code>rs-fMRI FC PCA-50</code> · <code>SEX (1)</code>.
+  Per-block RidgeCV → RidgeCV meta-stack; 5-fold inner CV; one refit on the
+  full 341 train subjects → single held-out prediction. Each level's
+  target set drops any composite that is an exact linear combination of
+  the others kept at the same level (e.g. <code>MEMORY_*_ImmMem</code>).
 </p>
-
-<h2>Composite formulations</h2>
-<p>
-  Each composite target is a summary index that the test publisher computes
-  from underlying subtests. We regressed every target on its plausible
-  component subtests; the fit is exact for the linearly-scored motor
-  composites and approximate for the WAIS / WMS norm indices because the
-  publishers' raw → scaled → norm transformation includes a non-linear
-  lookup-table step.
-</p>
-<table class="targets">
-  <thead>
-    <tr><th>Target</th><th>Components</th><th>OLS R²</th><th>Implicit formulation</th></tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Language — VCI</td>
-      <td>three WAIS scaled subtests</td>
-      <td>0.72</td>
-      <td>64.93 + 0.140·Similarity + 0.401·Vocabulary + 0.244·Information</td>
-    </tr>
-    <tr>
-      <td>Memory — Auditory Imm.</td>
-      <td>WMS auditory scaled subtests</td>
-      <td>0.37</td>
-      <td>77.60 + 0.292·LogMemI + 0.194·VerPairI</td>
-    </tr>
-    <tr>
-      <td>Memory — Visual Imm.</td>
-      <td>WMS visual scaled subtests</td>
-      <td>0.25</td>
-      <td>53.61 + 0.490·FacI + 0.281·FamPicI</td>
-    </tr>
-    <tr>
-      <td>Memory — Working Memory</td>
-      <td>LetterNumberSeq + Spatial Total</td>
-      <td>0.39</td>
-      <td>69.92 + 0.369·LetNumSeq + 0.370·SpaTotal</td>
-    </tr>
-    <tr>
-      <td>Motor — Fine Motor</td>
-      <td>4 Pegboard raw subtests</td>
-      <td><b>1.00</b></td>
-      <td>0.833·(PegDom + PegNonDom + PegBoth + PegAssemble)</td>
-    </tr>
-    <tr>
-      <td>Motor — Balance</td>
-      <td>functional reach + 4 single-leg-stance raw items</td>
-      <td>0.88</td>
-      <td>33.4 + 1.747·BestLegEyeClose + smaller contributions from the other four stance items</td>
-    </tr>
-    <tr>
-      <td>Motor — Processing Speed</td>
-      <td>Symbol Search + Symbol Coding raw</td>
-      <td><b>1.00</b></td>
-      <td>0.833·SymbolSearch + 0.370·SymbolCoding</td>
-    </tr>
-  </tbody>
-</table>
-<p class="small">
-  Fits computed by <code>codes/st_composites/analyze_composite_formulations.py</code>
-  on the full Quanta sample (n ≈ 413–452 with complete cases per target).
-  None of these component subtests is ever an input to the held-out
-  prediction model — they are listed only to make the targets' internal
-  structure explicit.
-</p>
-
-<h2>Composite-score design</h2>
-<p>
-  Targets were taken from the test-publisher canonical norm / scaled
-  composite indices in the cleaned phenotype file. Candidates that were
-  exact or near-exact linear combinations of the other composites were
-  removed: <code>MEMORY_ST_NORM_ImmMem</code> (R² = 0.996 on AudImm + VisImm),
-  <code>LANGUAGE_ST_SCALED_SUM</code> (R² = 0.982 on RAW_SUM), the raw
-  language sum (not age-normed; superseded by VCI), and
-  <code>LANGUAGE_ST_NORM_PR</code> (R² = 0.873; monotone percentile transform
-  of VCI). After pruning, leave-one-out R² is below 0.42 for every kept
-  composite and the standardized design-matrix condition number is 2.63.
-</p>
-
-<h2>Modality contribution (held-out Δ test MAE per dropped block)</h2>
-<p>
-  Each row is the change in held-out MAE when that block is removed from
-  the full stack (positive = block was informative; near-zero = redundant).
-</p>
-<table class="targets">
-  <thead>
-    <tr><th>Composite</th><th>Most informative block (Δ test MAE)</th></tr>
-  </thead>
-  <tbody>
-    <tr><td>Motor — Processing Speed</td><td>BEH (+0.99)</td></tr>
-    <tr><td>Memory — Visual Immediate</td><td>BEH (+0.37)</td></tr>
-    <tr><td>Memory — Auditory Immediate</td><td>BEH (+0.25)</td></tr>
-    <tr><td>Motor — Balance</td><td>BEH (+0.25)</td></tr>
-    <tr><td>Memory — Working Memory</td><td>BEH (+0.25)</td></tr>
-    <tr><td>Language — VCI</td><td>DTI (+0.19)</td></tr>
-    <tr><td>Motor — Fine Motor</td><td>BEH (+0.13)</td></tr>
-  </tbody>
-</table>
-<p class="small">
-  With chronological age excluded from the inputs, behaviour features
-  dominate six of seven targets; DTI is the most informative single block
-  for the language composite. EEG, MRI, deep features, rs-fMRI FC PCA, and
-  the sex covariate contribute marginally in this stacked configuration —
-  the per-block ridge OOFs share most of their general-ability signal.
-</p>
-
-<h2>Composite-prediction deviation (Zhang-corrected)</h2>
-<p>
-  Per-subject prediction error is corrected for the regression-to-mean bias
-  by subtracting the mean prediction of other-fold subjects within ±4 units
-  of the subject's true composite score (same scheme as the brain-age PAD
-  validation). The corrected deviation is then Pearson-correlated against
-  the 30 <code>BASIC_Q_*</code> questionnaire columns and the 70 unused
-  <code>_ST_</code> measures.
-</p>
-<p>
-  After Benjamini-Hochberg FDR correction across the 100 features tested per
-  target, each composite has 41–74 FDR-significant correlates. Strong
-  recurring patterns:
-</p>
-<ul>
-  <li>SF-36 Energy correlates negatively with Motor deviations (worse-than-predicted
-      motor scores covary with lower self-reported energy).</li>
-  <li>Aerobic-rating and waist-hip ratio correlate with Memory deviations
-      (cardiovascular fitness markers track over- and under-prediction).</li>
-  <li>Pegboard and symbol-coding raw sub-scores correlate with Fine Motor
-      and Processing Speed deviations — sibling motor subtests that were not
-      themselves model inputs.</li>
-  <li>Sleep quality (PSQI) and Beck Anxiety / Depression correlate with
-      several Memory deviations.</li>
-</ul>
-<p class="small">
-  Full table available in the interactive demo and in
-  <code>reports/deviation_correlations.csv</code>.
-</p>
-
-<h2>Cohort & pipeline</h2>
-<ul>
-  <li><strong>Cohort.</strong> 427 healthy adults, age 19–80, TCNL Quanta multimodal ageing study.</li>
-  <li><strong>Modalities.</strong> behaviour (199) · EEG morphology + PSD (659) ·
-      T1-w MRI morphometry (1094) · DTI ROI (90 FA + MD) · deep features (71;
-      SFCN + Pyment) · rs-fMRI Schaefer-400 FC PCA-50 · sex (1).
-      Chronological age is intentionally <em>not</em> a feature.</li>
-  <li><strong>Stack.</strong> Per-block RidgeCV out-of-fold predictions →
-      RidgeCV meta-learner. 5-fold inner CV; refit on the full 341 training
-      subjects for the held-out prediction.</li>
-  <li><strong>Split.</strong> Inherited from the brain-age held-out repo:
-      80 / 20 age × sex stratified, frozen ahead of the final run.</li>
-</ul>
+<section id='raw'>
+<h2>RAW</h2>
+<p class='small'>Raw subtest sums — bounded above by test ceilings, not age-normed.</p>
+<h3>Held-out results</h3>
+<table class='targets'><thead><tr><th>Target</th><th>n train</th><th>n test</th><th>CV MAE</th><th>Test MAE</th><th>Test R²</th><th>Test ρ</th><th>Baseline MAE</th></tr></thead><tbody><tr><td>Language verbal sum</td><td>341</td><td>86</td><td>11.813 ± 1.07</td><td>12.734</td><td><b>-0.013</b></td><td><b>0.200</b></td><td>12.395</td></tr><tr><td>Memory — Auditory Imm.</td><td>339</td><td>86</td><td>10.549 ± 0.58</td><td>11.900</td><td><b>0.323</b></td><td><b>0.594</b></td><td>14.581</td></tr><tr><td>Memory — Visual Imm.</td><td>339</td><td>86</td><td>9.167 ± 0.87</td><td>9.291</td><td><b>0.345</b></td><td><b>0.617</b></td><td>12.929</td></tr><tr><td>Memory — Working Memory</td><td>339</td><td>86</td><td>3.131 ± 0.17</td><td>3.321</td><td><b>0.335</b></td><td><b>0.596</b></td><td>4.040</td></tr></tbody></table>
+<h3>Composite components</h3>
+<table class='targets'><thead><tr><th>Target</th><th>Components</th><th>OLS R²</th></tr></thead><tbody><tr><td>Language verbal sum</td><td><code>LANGUAGE_ST_RAW_SIMILARITY, LANGUAGE_ST_RAW_VOCABULARY, LANGUAGE_ST_RAW_INFORMATION</code></td><td>1.000</td></tr><tr><td>Memory — Auditory Imm.</td><td><code>MEMORY_ST_RAW_LogMemI, MEMORY_ST_RAW_VerPairI</code></td><td>1.000</td></tr><tr><td>Memory — Visual Imm.</td><td><code>MEMORY_ST_RAW_FacI, MEMORY_ST_RAW_FamPicI</code></td><td>1.000</td></tr><tr><td>Memory — Working Memory</td><td><code>MEMORY_ST_RAW_LetNumSeq, MEMORY_ST_RAW_SpaTotal</code></td><td>1.000</td></tr></tbody></table>
+<h3>Most-informative modality block per target (Δ test MAE)</h3>
+<table class='targets'><thead><tr><th>Target</th><th>Block</th><th>Δ test MAE</th><th>Δ test R²</th></tr></thead><tbody><tr><td>Language verbal sum</td><td>BEH</td><td>0.218</td><td>-0.063</td></tr><tr><td>Memory — Auditory Imm.</td><td>BEH</td><td>1.296</td><td>-0.162</td></tr><tr><td>Memory — Visual Imm.</td><td>BEH</td><td>0.864</td><td>-0.082</td></tr><tr><td>Memory — Working Memory</td><td>BEH</td><td>0.090</td><td>-0.056</td></tr></tbody></table>
+<h3>Deviation correlates surviving FDR<0.05 (out of 100 features tested per target)</h3>
+<table class='targets'><thead><tr><th>Target</th><th>Deviation SD</th><th>n significant (Q / ST)</th></tr></thead><tbody><tr><td>Language verbal sum</td><td>5.91</td><td>71 (15 / 56)</td></tr><tr><td>Memory — Auditory Imm.</td><td>9.12</td><td>66 (12 / 54)</td></tr><tr><td>Memory — Visual Imm.</td><td>7.52</td><td>75 (14 / 61)</td></tr><tr><td>Memory — Working Memory</td><td>2.80</td><td>77 (16 / 61)</td></tr></tbody></table>
+</section>
+<section id='scaled'>
+<h2>SCALED</h2>
+<p class='small'>Age-normed scaled scores summed into composites (publisher's scaled-sum step).</p>
+<h3>Held-out results</h3>
+<table class='targets'><thead><tr><th>Target</th><th>n train</th><th>n test</th><th>CV MAE</th><th>Test MAE</th><th>Test R²</th><th>Test ρ</th><th>Baseline MAE</th></tr></thead><tbody><tr><td>Language verbal sum</td><td>341</td><td>86</td><td>29.909 ± 2.46</td><td>33.406</td><td><b>-0.033</b></td><td><b>0.213</b></td><td>32.123</td></tr><tr><td>Memory — Auditory Imm.</td><td>339</td><td>86</td><td>11.224 ± 0.57</td><td>11.887</td><td><b>0.356</b></td><td><b>0.612</b></td><td>14.850</td></tr><tr><td>Memory — Visual Imm.</td><td>339</td><td>86</td><td>6.972 ± 0.67</td><td>7.040</td><td><b>0.333</b></td><td><b>0.607</b></td><td>9.542</td></tr><tr><td>Memory — Working Memory</td><td>339</td><td>86</td><td>6.455 ± 0.32</td><td>6.493</td><td><b>0.369</b></td><td><b>0.615</b></td><td>8.250</td></tr><tr><td>Motor — Fine Motor</td><td>337</td><td>86</td><td>6.430 ± 0.38</td><td>5.298</td><td><b>0.549</b></td><td><b>0.745</b></td><td>8.186</td></tr><tr><td>Motor — Balance</td><td>330</td><td>83</td><td>12.269 ± 0.88</td><td>10.968</td><td><b>0.476</b></td><td><b>0.697</b></td><td>16.667</td></tr><tr><td>Motor — Processing Speed</td><td>337</td><td>86</td><td>6.950 ± 0.26</td><td>7.136</td><td><b>0.579</b></td><td><b>0.761</b></td><td>11.382</td></tr></tbody></table>
+<h3>Composite components</h3>
+<table class='targets'><thead><tr><th>Target</th><th>Components</th><th>OLS R²</th></tr></thead><tbody><tr><td>Language verbal sum</td><td><code>LANGUAGE_ST_SCALED_SIMILARITY, LANGUAGE_ST_SCALED_VOCABULARY, LANGUAGE_ST_SCALED_INFORMATION</code></td><td>1.000</td></tr><tr><td>Memory — Auditory Imm.</td><td><code>MEMORY_ST_SCALED_LogMemI, MEMORY_ST_SCALED_VerPairI</code></td><td>1.000</td></tr><tr><td>Memory — Visual Imm.</td><td><code>MEMORY_ST_SCALED_FacI, MEMORY_ST_SCALED_FamPicI</code></td><td>1.000</td></tr><tr><td>Memory — Working Memory</td><td><code>MEMORY_ST_SCALED_LetNumSeq, MEMORY_ST_SCALED_SpaTotal</code></td><td>1.000</td></tr><tr><td>Motor — Fine Motor</td><td><code>MOTOR_ST_RAW_PegboardDominant, MOTOR_ST_RAW_PegboardNondominant, MOTOR_ST_RAW_PegboardBoth, MOTOR_ST_RAW_PegboardAssemble</code></td><td>1.000</td></tr><tr><td>Motor — Balance</td><td><code>MOTOR_ST_RAW_FunctionalReaching, MOTOR_ST_RAW_BestLegEyeOpen, MOTOR_ST_RAW_WorseLegEyeOpen, MOTOR_ST_RAW_BestLegEyeClose, MOTOR_ST_RAW_WorseLegEyeClose</code></td><td>0.877</td></tr><tr><td>Motor — Processing Speed</td><td><code>MOTOR_ST_RAW_SymbolSearch, MOTOR_ST_RAW_SymbolCoding</code></td><td>1.000</td></tr></tbody></table>
+<h3>Most-informative modality block per target (Δ test MAE)</h3>
+<table class='targets'><thead><tr><th>Target</th><th>Block</th><th>Δ test MAE</th><th>Δ test R²</th></tr></thead><tbody><tr><td>Language verbal sum</td><td>BEH</td><td>0.792</td><td>-0.072</td></tr><tr><td>Memory — Auditory Imm.</td><td>BEH</td><td>1.282</td><td>-0.146</td></tr><tr><td>Memory — Visual Imm.</td><td>BEH</td><td>0.619</td><td>-0.083</td></tr><tr><td>Memory — Working Memory</td><td>BEH</td><td>0.254</td><td>-0.064</td></tr><tr><td>Motor — Fine Motor</td><td>BEH</td><td>0.135</td><td>-0.029</td></tr><tr><td>Motor — Balance</td><td>BEH</td><td>0.247</td><td>-0.025</td></tr><tr><td>Motor — Processing Speed</td><td>BEH</td><td>0.988</td><td>-0.107</td></tr></tbody></table>
+<h3>Deviation correlates surviving FDR<0.05 (out of 100 features tested per target)</h3>
+<table class='targets'><thead><tr><th>Target</th><th>Deviation SD</th><th>n significant (Q / ST)</th></tr></thead><tbody><tr><td>Language verbal sum</td><td>19.17</td><td>71 (14 / 57)</td></tr><tr><td>Memory — Auditory Imm.</td><td>9.09</td><td>62 (12 / 50)</td></tr><tr><td>Memory — Visual Imm.</td><td>5.43</td><td>72 (14 / 58)</td></tr><tr><td>Memory — Working Memory</td><td>5.54</td><td>67 (14 / 53)</td></tr><tr><td>Motor — Fine Motor</td><td>5.25</td><td>74 (14 / 60)</td></tr><tr><td>Motor — Balance</td><td>9.67</td><td>69 (17 / 52)</td></tr><tr><td>Motor — Processing Speed</td><td>6.85</td><td>71 (15 / 56)</td></tr></tbody></table>
+</section>
+<section id='norm'>
+<h2>NORM</h2>
+<p class='small'>Publisher norm-table indices on top of the scaled sums (with non-linear lookup).</p>
+<h3>Held-out results</h3>
+<table class='targets'><thead><tr><th>Target</th><th>n train</th><th>n test</th><th>CV MAE</th><th>Test MAE</th><th>Test R²</th><th>Test ρ</th><th>Baseline MAE</th></tr></thead><tbody><tr><td>Language — VCI</td><td>341</td><td>86</td><td>9.740 ± 0.96</td><td>10.143</td><td><b>0.156</b></td><td><b>0.431</b></td><td>11.148</td></tr><tr><td>Memory — Auditory Imm.</td><td>339</td><td>86</td><td>9.908 ± 0.39</td><td>10.287</td><td><b>0.088</b></td><td><b>0.389</b></td><td>11.201</td></tr><tr><td>Memory — Visual Imm.</td><td>339</td><td>86</td><td>10.864 ± 0.64</td><td>11.729</td><td><b>0.225</b></td><td><b>0.550</b></td><td>13.235</td></tr><tr><td>Memory — Working Memory</td><td>339</td><td>86</td><td>10.008 ± 0.52</td><td>9.247</td><td><b>0.083</b></td><td><b>0.301</b></td><td>10.128</td></tr></tbody></table>
+<h3>Composite components</h3>
+<table class='targets'><thead><tr><th>Target</th><th>Components</th><th>OLS R²</th></tr></thead><tbody><tr><td>Language — VCI</td><td><code>LANGUAGE_ST_SCALED_SIMILARITY, LANGUAGE_ST_SCALED_VOCABULARY, LANGUAGE_ST_SCALED_INFORMATION</code></td><td>0.717</td></tr><tr><td>Memory — Auditory Imm.</td><td><code>MEMORY_ST_SCALED_LogMemI, MEMORY_ST_SCALED_VerPairI</code></td><td>0.370</td></tr><tr><td>Memory — Visual Imm.</td><td><code>MEMORY_ST_SCALED_FacI, MEMORY_ST_SCALED_FamPicI</code></td><td>0.252</td></tr><tr><td>Memory — Working Memory</td><td><code>MEMORY_ST_SCALED_LetNumSeq, MEMORY_ST_SCALED_SpaTotal</code></td><td>0.394</td></tr></tbody></table>
+<h3>Most-informative modality block per target (Δ test MAE)</h3>
+<table class='targets'><thead><tr><th>Target</th><th>Block</th><th>Δ test MAE</th><th>Δ test R²</th></tr></thead><tbody><tr><td>Language — VCI</td><td>DTI</td><td>0.186</td><td>-0.024</td></tr><tr><td>Memory — Auditory Imm.</td><td>BEH</td><td>0.254</td><td>-0.044</td></tr><tr><td>Memory — Visual Imm.</td><td>BEH</td><td>0.369</td><td>-0.046</td></tr><tr><td>Memory — Working Memory</td><td>BEH</td><td>0.246</td><td>-0.031</td></tr></tbody></table>
+<h3>Deviation correlates surviving FDR<0.05 (out of 100 features tested per target)</h3>
+<table class='targets'><thead><tr><th>Target</th><th>Deviation SD</th><th>n significant (Q / ST)</th></tr></thead><tbody><tr><td>Language — VCI</td><td>4.03</td><td>65 (9 / 56)</td></tr><tr><td>Memory — Auditory Imm.</td><td>5.43</td><td>42 (3 / 39)</td></tr><tr><td>Memory — Visual Imm.</td><td>7.31</td><td>70 (13 / 57)</td></tr><tr><td>Memory — Working Memory</td><td>3.55</td><td>59 (8 / 51)</td></tr></tbody></table>
+</section>
 
 <footer>
-  Source: <code>tcnl2021-lab/quanta-st-composites</code> (preparing for public
-  upload). Working repo: internal <code>Quanta_st_composites</code>. No raw
-  subject features ship with this demo — only de-identified position-indexed
-  prediction vectors, the per-target metric summaries, the modality ablation
-  table, and the deviation-correlation table.
+  Source: <code>tcnl2021-lab/quanta-st-composites</code> (public). Working
+  repo: internal <code>Quanta_st_composites</code>. No raw subject features
+  ship with this demo — only de-identified position-indexed prediction
+  vectors, per-level metrics, ablation tables, formulation tables, and
+  Zhang-corrected deviation correlations.
 </footer>
 
 </body>

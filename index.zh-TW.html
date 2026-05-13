@@ -6,96 +6,65 @@
 <title>標準化測驗合成分數預測 — TCNL 實驗室</title>
 <style>
   :root {
-    --ink: #1d2530;
-    --fade: #5b6470;
-    --card: #f7f7f3;
-    --accent: #5a6c80;
-    --rule: #dcdcd6;
-    --hover: #eef2f6;
-    --good: #6ea88a;
+    --ink: #1d2530; --fade: #5b6470; --card: #f7f7f3;
+    --accent: #5a6c80; --rule: #dcdcd6; --hover: #eef2f6; --good: #6ea88a;
   }
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
                  "Helvetica Neue", "PingFang TC", "Noto Sans TC",
                  "Microsoft JhengHei", Arial, sans-serif;
-    color: var(--ink);
-    max-width: 820px;
-    margin: 3rem auto 6rem;
-    padding: 0 1.4rem;
-    line-height: 1.7;
-    background: #fcfcfa;
+    color: var(--ink); max-width: 880px; margin: 3rem auto 6rem;
+    padding: 0 1.4rem; line-height: 1.55; background: #fcfcfa;
   }
-  h1 { font-size: 1.85rem; margin: 0 0 0.25rem; letter-spacing: -0.01em; line-height: 1.4; }
-  h2 { font-size: 1.1rem; margin: 2.2rem 0 0.6rem; letter-spacing: -0.005em; }
-  .tag {
-    display: inline-block; font-size: 0.72rem;
-    background: var(--accent); color: white;
-    padding: 2px 7px; border-radius: 3px;
-    letter-spacing: 0.02em; margin-bottom: 0.55rem;
-  }
+  h1 { font-size: 1.85rem; margin: 0 0 0.25rem; letter-spacing: -0.01em; }
+  h2 { font-size: 1.2rem; margin: 2.4rem 0 0.6rem; letter-spacing: -0.005em;
+       padding-top: 0.4rem; border-top: 2px solid var(--accent); }
+  h3 { font-size: 0.98rem; margin: 1.4rem 0 0.5rem; color: var(--fade);
+       text-transform: uppercase; letter-spacing: 0.04em; }
+  .tag { display: inline-block; font-size: 0.72rem;
+         background: var(--accent); color: white; padding: 2px 7px;
+         border-radius: 3px; letter-spacing: 0.02em; margin-bottom: 0.55rem; }
   .subtitle { color: var(--fade); font-size: 0.96rem; margin: 0 0 2rem; }
-
-  .targets {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 1.0rem 0 1.6rem;
-    font-size: 0.92rem;
-  }
-  .targets th, .targets td {
-    padding: 0.45rem 0.6rem;
-    border-bottom: 1px solid var(--rule);
-    text-align: right;
-    font-variant-numeric: tabular-nums;
-  }
+  .targets { width: 100%; border-collapse: collapse;
+             margin: 0.6rem 0 1.4rem; font-size: 0.9rem; }
+  .targets th, .targets td { padding: 0.42rem 0.55rem;
+             border-bottom: 1px solid var(--rule); text-align: right;
+             font-variant-numeric: tabular-nums; }
   .targets th:first-child, .targets td:first-child { text-align: left; }
-  .targets th { color: var(--fade); font-weight: 500; font-size: 0.82rem;
+  .targets th { color: var(--fade); font-weight: 500; font-size: 0.78rem;
                 letter-spacing: 0.03em; }
-
-  .cta {
-    display: inline-block; background: var(--accent); color: white;
-    padding: 0.65rem 1.15rem; border-radius: 6px;
-    text-decoration: none; font-size: 0.95rem; font-weight: 500;
-    margin-top: 0.4rem;
-    transition: background 0.15s, transform 0.15s;
-  }
+  .cta { display: inline-block; background: var(--accent); color: white;
+         padding: 0.65rem 1.15rem; border-radius: 6px; text-decoration: none;
+         font-size: 0.95rem; font-weight: 500; margin-top: 0.4rem;
+         transition: background 0.15s, transform 0.15s; }
   .cta:hover { background: #475765; transform: translateY(-1px); }
   .cta .arrow { margin-left: 0.4rem; }
-
   p { margin: 0.6rem 0; }
-  ul { padding-left: 1.2rem; }
-  li { margin: 0.25rem 0; }
   code { background: var(--card); padding: 1px 5px; border-radius: 3px;
-         font-size: 0.88em; }
+         font-size: 0.86em; }
   a { color: #356ea6; }
-
-  footer {
-    margin-top: 3rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--rule);
-    font-size: 0.82rem;
-    color: var(--fade);
-  }
-
-  .badge {
-    display: inline-flex; align-items: center; gap: 6px;
-    font-size: 0.78rem; color: #4a5663;
-    background: #eef1ee; border: 1px solid var(--rule);
-    padding: 3px 10px; border-radius: 999px;
-    font-family: ui-monospace, "SF Mono", Menlo, monospace;
-    font-variant-numeric: tabular-nums;
-  }
-  .badge::before {
-    content: ""; width: 6px; height: 6px;
-    border-radius: 50%; background: var(--good); display: inline-block;
-  }
-  .small { font-size: 0.82rem; color: var(--fade); }
-  .topbar {
-    display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
-    font-size: 0.82rem; color: var(--fade);
-    margin: 0 0 1.4rem;
-  }
+  footer { margin-top: 3rem; padding-top: 1rem;
+           border-top: 1px solid var(--rule); font-size: 0.82rem;
+           color: var(--fade); }
+  .badge { display: inline-flex; align-items: center; gap: 6px;
+           font-size: 0.78rem; color: #4a5663; background: #eef1ee;
+           border: 1px solid var(--rule); padding: 3px 10px;
+           border-radius: 999px;
+           font-family: ui-monospace, "SF Mono", Menlo, monospace;
+           font-variant-numeric: tabular-nums; }
+  .badge::before { content: ""; width: 6px; height: 6px;
+           border-radius: 50%; background: var(--good); display: inline-block; }
+  .small { font-size: 0.84rem; color: var(--fade); }
+  .topbar { display: flex; justify-content: space-between; gap: 1rem;
+            flex-wrap: wrap; font-size: 0.82rem; color: var(--fade);
+            margin: 0 0 1.4rem; }
   .topbar a { color: #356ea6; text-decoration: none; }
   .topbar a:hover { text-decoration: underline; }
+  .jumpnav { display: flex; gap: 0.4rem; margin: 0.6rem 0 2rem; flex-wrap: wrap; }
+  .jumpnav a { background: var(--card); border: 1px solid var(--rule);
+               padding: 4px 12px; border-radius: 6px; text-decoration: none;
+               color: var(--ink); font-size: 0.86rem; font-weight: 500; }
+  .jumpnav a:hover { background: var(--hover); }
 </style>
 </head>
 <body>
@@ -108,196 +77,78 @@
 <span class="tag">獨立測試集驗證</span>
 <h1>以多模態腦影像與行為資料預測標準化測驗合成分數</h1>
 <p class="subtitle">
-  與 TCNL Quanta 多模態腦齡分析共用受試者隊列（n = 427）與凍結 80/20
-  年齡 × 性別分層分割（訓練 341 人、保留 86 人）。模態區塊相同,但
-  預測目標改為七項認知與動作合成分數（WAIS 語文理解指標、三項 Wechsler
-  記憶指標、三項動作合成分數）而非實際年齡。
-  <strong>實際年齡刻意不納入特徵集</strong>,
-  以便殘餘預測力僅反映腦影像、行為與性別之貢獻;
-  本分析所用之合成分數已由原測驗發行單位完成年齡常模化或量尺化。
+  與 TCNL Quanta 多模態腦齡分析共用受試者隊列(n = 427)與凍結 80/20
+  年齡 × 性別分層分割(訓練 341 人、保留 86 人)。模態區塊相同,但
+  預測目標為認知與動作合成分數,而非實際年齡。
+  <strong>實際年齡刻意不納入特徵集</strong>。
+  本分析將模型在三個分數層次(RAW、SCALED、NORM)上獨立訓練與評估,
+  因發行單位之「原始 → 量尺 → 常模」轉換為非線性,各層次所攜帶之訊號雜訊比有別。
 </p>
 
 <p>
-  <a class="cta" href="https://quanta-st-composites.streamlit.app/">
-    開啟互動式 Demo<span class="arrow">→</span>
-  </a>
+  <a class="cta" href="https://quanta-st-composites.streamlit.app/">開啟互動式 Demo<span class="arrow">→</span></a>
   <span class="badge" style="margin-left:0.6rem">已部署於 Streamlit Cloud</span>
 </p>
 
-<h2>獨立測試集結果</h2>
-<table class="targets">
-  <thead>
-    <tr>
-      <th>合成分數</th>
-      <th>CV MAE</th>
-      <th>測試集 MAE</th>
-      <th>測試集 R²</th>
-      <th>測試集 ρ</th>
-      <th>相對基準 Δ</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr><td>動作 — 處理速度</td><td>6.95</td><td>7.14</td><td><b>0.579</b></td><td><b>0.761</b></td><td>−4.25</td></tr>
-    <tr><td>動作 — 精細動作</td><td>6.43</td><td>5.30</td><td><b>0.549</b></td><td><b>0.745</b></td><td>−2.89</td></tr>
-    <tr><td>動作 — 平衡</td><td>12.27</td><td>10.97</td><td><b>0.476</b></td><td><b>0.697</b></td><td>−5.70</td></tr>
-    <tr><td>記憶 — 視覺立即</td><td>10.86</td><td>11.73</td><td>0.225</td><td>0.550</td><td>−1.51</td></tr>
-    <tr><td>語文 — VCI 語文理解</td><td>9.74</td><td>10.14</td><td>0.156</td><td>0.431</td><td>−1.00</td></tr>
-    <tr><td>記憶 — 聽覺立即</td><td>9.91</td><td>10.29</td><td>0.088</td><td>0.389</td><td>−0.91</td></tr>
-    <tr><td>記憶 — 工作記憶</td><td>10.01</td><td>9.25</td><td>0.083</td><td>0.301</td><td>−0.88</td></tr>
-  </tbody>
-</table>
+<nav class="jumpnav">
+  <a href="#raw">RAW(原始)</a>
+  <a href="#scaled">SCALED(量尺)</a>
+  <a href="#norm">NORM(常模)</a>
+</nav>
+
 <p class="small">
-  CV MAE：以 341 名訓練受試者進行的 5-fold 交叉驗證平均 MAE。
-  基準 = 訓練樣本平均值預測;Δ 為測試集 MAE 減去該基準。
-  七項目標在 86 名保留樣本上皆優於訓練平均基準。
+  三個層次共用相同的七個特徵區塊:<code>BEH 行為 (199)</code> ·
+  <code>EEG + 功率譜 (659)</code> · <code>MRI 形態 (1094)</code> ·
+  <code>DTI ROI (90)</code> · <code>深度特徵 SFCN+Pyment (71)</code> ·
+  <code>rs-fMRI FC PCA-50</code> · <code>性別 (1)</code>。
+  各區塊以 RidgeCV 產生 OOF → RidgeCV 後設學習器堆疊;
+  內部 5-fold CV;以全部 341 訓練受試者重新擬合後對保留樣本進行單次預測。
+  每個層次都會剔除與其他合成分數呈完全線性組合的目標(例如
+  <code>MEMORY_*_ImmMem</code>)。
 </p>
-
-<h2>合成分數構成方式</h2>
-<p>
-  每一個目標合成分數均為測驗發行單位由其底層子測驗計算而得的綜合指標。
-  以下將每個目標合成分數對其推測之子測驗組成作線性迴歸,
-  動作合成分數因採線性加權計分,可完全還原;
-  WAIS / WMS 之常模化指標因發行單位使用「原始 → 量尺 → 常模」之
-  非線性對照表轉換,故僅能近似還原。
-</p>
-<table class="targets">
-  <thead>
-    <tr><th>目標</th><th>組成子測驗</th><th>OLS R²</th><th>近似公式</th></tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>語文 — VCI</td>
-      <td>三項 WAIS 量尺分數</td>
-      <td>0.72</td>
-      <td>64.93 + 0.140·Similarity + 0.401·Vocabulary + 0.244·Information</td>
-    </tr>
-    <tr>
-      <td>記憶 — 聽覺立即</td>
-      <td>WMS 聽覺量尺子分數</td>
-      <td>0.37</td>
-      <td>77.60 + 0.292·LogMemI + 0.194·VerPairI</td>
-    </tr>
-    <tr>
-      <td>記憶 — 視覺立即</td>
-      <td>WMS 視覺量尺子分數</td>
-      <td>0.25</td>
-      <td>53.61 + 0.490·FacI + 0.281·FamPicI</td>
-    </tr>
-    <tr>
-      <td>記憶 — 工作記憶</td>
-      <td>LetterNumberSeq + Spatial Total</td>
-      <td>0.39</td>
-      <td>69.92 + 0.369·LetNumSeq + 0.370·SpaTotal</td>
-    </tr>
-    <tr>
-      <td>動作 — 精細動作</td>
-      <td>四項 Pegboard 原始分數</td>
-      <td><b>1.00</b></td>
-      <td>0.833·(PegDom + PegNonDom + PegBoth + PegAssemble)</td>
-    </tr>
-    <tr>
-      <td>動作 — 平衡</td>
-      <td>功能性伸展 + 四項單腳站立原始分</td>
-      <td>0.88</td>
-      <td>33.4 + 1.747·BestLegEyeClose + 其他四項單腳站立小幅貢獻</td>
-    </tr>
-    <tr>
-      <td>動作 — 處理速度</td>
-      <td>Symbol Search + Symbol Coding 原始分</td>
-      <td><b>1.00</b></td>
-      <td>0.833·SymbolSearch + 0.370·SymbolCoding</td>
-    </tr>
-  </tbody>
-</table>
-<p class="small">
-  公式由 <code>codes/st_composites/analyze_composite_formulations.py</code>
-  在完整 Quanta 樣本(各目標 n ≈ 413–452 個完整案例)上以 OLS 擬合得到。
-  上述子測驗本身<strong>不曾</strong>作為模型輸入特徵,
-  此處僅供呈現各目標合成分數之內部結構。
-</p>
-
-<h2>合成分數設計</h2>
-<p>
-  目標取自原始測驗發行單位提供的常模 / 量尺合成指標。對其他合成分數
-  呈現完全或近乎完全線性組合關係者已先行剔除:
-  <code>MEMORY_ST_NORM_ImmMem</code>(對 AudImm + VisImm 之 R² = 0.996)、
-  <code>LANGUAGE_ST_SCALED_SUM</code>(對 RAW_SUM 之 R² = 0.982)、
-  語文原始總分(尚未做年齡常模化,由 VCI 取代)、與
-  <code>LANGUAGE_ST_NORM_PR</code>(VCI 的單調百分等級轉換,
-  R² = 0.873)。
-  經此剔除後,每個保留合成分數對其餘六項之 LOO R² 皆低於 0.42,
-  標準化後的設計矩陣條件數為 2.63。
-</p>
-
-<h2>各模態區塊貢獻(以保留樣本 Δ 測試 MAE 計算)</h2>
-<p>
-  每一列表示自完整堆疊模型中移除該區塊後,保留樣本 MAE 之變化量
-  (正值代表該區塊帶有獨立資訊;接近零代表與其他區塊資訊重疊)。
-</p>
-<table class="targets">
-  <thead>
-    <tr><th>合成分數</th><th>最有資訊量的區塊(Δ 測試 MAE)</th></tr>
-  </thead>
-  <tbody>
-    <tr><td>動作 — 處理速度</td><td>BEH 行為(+0.99)</td></tr>
-    <tr><td>記憶 — 視覺立即</td><td>BEH 行為(+0.37)</td></tr>
-    <tr><td>記憶 — 聽覺立即</td><td>BEH 行為(+0.25)</td></tr>
-    <tr><td>動作 — 平衡</td><td>BEH 行為(+0.25)</td></tr>
-    <tr><td>記憶 — 工作記憶</td><td>BEH 行為(+0.25)</td></tr>
-    <tr><td>語文 — VCI</td><td>DTI 白質結構(+0.19)</td></tr>
-    <tr><td>動作 — 精細動作</td><td>BEH 行為(+0.13)</td></tr>
-  </tbody>
-</table>
-<p class="small">
-  在實際年齡未進入特徵之設定下,七個目標中有六個由行為特徵主導;
-  DTI 白質區塊則為語文合成分數最有資訊量的單一模態。
-  EEG、MRI、深度特徵、rs-fMRI FC PCA 與性別共變項之邊際貢獻較小,
-  原因為各區塊之 RidgeCV OOF 已大量共享一般能力訊號。
-</p>
-
-<h2>合成分數預測偏差(Zhang 校正)</h2>
-<p>
-  逐受試者預測誤差先以與腦齡 PAD 驗證相同之 Zhang 校正法去除
-  回歸至平均之偏誤(window = ±4 分,保留樣本以全部訓練受試者
-  作為參考集),再與 30 個 <code>BASIC_Q_*</code> 問卷欄位及 70 個未進入
-  模型訓練的 <code>_ST_</code> 變數作 Pearson 相關。
-</p>
-<p>
-  經 Benjamini-Hochberg FDR 校正(每個目標 100 個變數同時測試),
-  每個合成分數皆有 41–74 個 FDR-顯著相關變數。常見的主題包括:
-</p>
-<ul>
-  <li>SF-36 活力分數 與 動作合成偏差呈負相關(預測過低者,自陳活力較低)。</li>
-  <li>有氧能力分級與腰臀比 與 記憶合成偏差相關(心血管體適能指標
-      可解釋過度與不足預測的方向)。</li>
-  <li>釘板與符號編碼之原始分數 與 精細動作及處理速度偏差相關
-      (同為動作測驗中未進入模型的子分數)。</li>
-  <li>PSQI 睡眠品質、Beck 焦慮 / 憂鬱分數 與多項記憶偏差相關。</li>
-</ul>
-<p class="small">
-  完整對照表可於互動式 Demo 中瀏覽,或參考
-  <code>reports/deviation_correlations.csv</code>。
-</p>
-
-<h2>受試者隊列與分析流程</h2>
-<ul>
-  <li><strong>受試者。</strong>427 位健康成人,年齡 19–80 歲,TCNL Quanta 多模態老化研究。</li>
-  <li><strong>模態。</strong>行為(199)・EEG 形態與功率譜(659)・T1 加權 MRI 形態量化(1094)・
-      DTI ROI(45 FA + 45 MD)・深度特徵(71;SFCN + Pyment)・
-      rs-fMRI Schaefer-400 FC PCA-50・性別(1)。
-      實際年齡刻意<em>未</em>納入特徵集。</li>
-  <li><strong>模型架構。</strong>各模態區塊以 RidgeCV 產生 out-of-fold 預測 →
-      RidgeCV 後設學習器堆疊。內部 5-fold CV;以全部 341 訓練受試者
-      重新擬合後,對保留樣本進行單次預測。</li>
-  <li><strong>分割。</strong>自腦齡獨立測試集分析繼承:
-      80 / 20 年齡 × 性別分層,於最終分析前凍結。</li>
-</ul>
+<section id='raw'>
+<h2>RAW</h2>
+<p class='small'>原始子測驗加總分數,受測驗天花板效應限制,且未經年齡常模化。</p>
+<h3>獨立測試集結果</h3>
+<table class='targets'><thead><tr><th>目標</th><th>n 訓練</th><th>n 測試</th><th>CV MAE</th><th>測試 MAE</th><th>測試 R²</th><th>測試 ρ</th><th>基準 MAE</th></tr></thead><tbody><tr><td>語文 — 原始總分</td><td>341</td><td>86</td><td>11.813 ± 1.07</td><td>12.734</td><td><b>-0.013</b></td><td><b>0.200</b></td><td>12.395</td></tr><tr><td>記憶 — 聽覺立即</td><td>339</td><td>86</td><td>10.549 ± 0.58</td><td>11.900</td><td><b>0.323</b></td><td><b>0.594</b></td><td>14.581</td></tr><tr><td>記憶 — 視覺立即</td><td>339</td><td>86</td><td>9.167 ± 0.87</td><td>9.291</td><td><b>0.345</b></td><td><b>0.617</b></td><td>12.929</td></tr><tr><td>記憶 — 工作記憶</td><td>339</td><td>86</td><td>3.131 ± 0.17</td><td>3.321</td><td><b>0.335</b></td><td><b>0.596</b></td><td>4.040</td></tr></tbody></table>
+<h3>合成分數構成</h3>
+<table class='targets'><thead><tr><th>目標</th><th>組成子測驗</th><th>OLS R²</th></tr></thead><tbody><tr><td>語文 — 原始總分</td><td><code>LANGUAGE_ST_RAW_SIMILARITY, LANGUAGE_ST_RAW_VOCABULARY, LANGUAGE_ST_RAW_INFORMATION</code></td><td>1.000</td></tr><tr><td>記憶 — 聽覺立即</td><td><code>MEMORY_ST_RAW_LogMemI, MEMORY_ST_RAW_VerPairI</code></td><td>1.000</td></tr><tr><td>記憶 — 視覺立即</td><td><code>MEMORY_ST_RAW_FacI, MEMORY_ST_RAW_FamPicI</code></td><td>1.000</td></tr><tr><td>記憶 — 工作記憶</td><td><code>MEMORY_ST_RAW_LetNumSeq, MEMORY_ST_RAW_SpaTotal</code></td><td>1.000</td></tr></tbody></table>
+<h3>各目標最具資訊量之模態區塊(Δ 測試 MAE)</h3>
+<table class='targets'><thead><tr><th>目標</th><th>區塊</th><th>Δ 測試 MAE</th><th>Δ 測試 R²</th></tr></thead><tbody><tr><td>語文 — 原始總分</td><td>BEH</td><td>0.218</td><td>-0.063</td></tr><tr><td>記憶 — 聽覺立即</td><td>BEH</td><td>1.296</td><td>-0.162</td></tr><tr><td>記憶 — 視覺立即</td><td>BEH</td><td>0.864</td><td>-0.082</td></tr><tr><td>記憶 — 工作記憶</td><td>BEH</td><td>0.090</td><td>-0.056</td></tr></tbody></table>
+<h3>FDR<0.05 顯著的偏差相關變數數量(每目標 100 個變數)</h3>
+<table class='targets'><thead><tr><th>目標</th><th>偏差 SD</th><th>顯著數 (Q / ST)</th></tr></thead><tbody><tr><td>語文 — 原始總分</td><td>5.91</td><td>71 (15 / 56)</td></tr><tr><td>記憶 — 聽覺立即</td><td>9.12</td><td>66 (12 / 54)</td></tr><tr><td>記憶 — 視覺立即</td><td>7.52</td><td>75 (14 / 61)</td></tr><tr><td>記憶 — 工作記憶</td><td>2.80</td><td>77 (16 / 61)</td></tr></tbody></table>
+</section>
+<section id='scaled'>
+<h2>SCALED</h2>
+<p class='small'>經年齡常模化之量尺子分數加總而成的合成分數(發行單位之量尺加總步驟)。</p>
+<h3>獨立測試集結果</h3>
+<table class='targets'><thead><tr><th>目標</th><th>n 訓練</th><th>n 測試</th><th>CV MAE</th><th>測試 MAE</th><th>測試 R²</th><th>測試 ρ</th><th>基準 MAE</th></tr></thead><tbody><tr><td>語文 — 量尺總分</td><td>341</td><td>86</td><td>29.909 ± 2.46</td><td>33.406</td><td><b>-0.033</b></td><td><b>0.213</b></td><td>32.123</td></tr><tr><td>記憶 — 聽覺立即</td><td>339</td><td>86</td><td>11.224 ± 0.57</td><td>11.887</td><td><b>0.356</b></td><td><b>0.612</b></td><td>14.850</td></tr><tr><td>記憶 — 視覺立即</td><td>339</td><td>86</td><td>6.972 ± 0.67</td><td>7.040</td><td><b>0.333</b></td><td><b>0.607</b></td><td>9.542</td></tr><tr><td>記憶 — 工作記憶</td><td>339</td><td>86</td><td>6.455 ± 0.32</td><td>6.493</td><td><b>0.369</b></td><td><b>0.615</b></td><td>8.250</td></tr><tr><td>動作 — 精細動作</td><td>337</td><td>86</td><td>6.430 ± 0.38</td><td>5.298</td><td><b>0.549</b></td><td><b>0.745</b></td><td>8.186</td></tr><tr><td>動作 — 平衡</td><td>330</td><td>83</td><td>12.269 ± 0.88</td><td>10.968</td><td><b>0.476</b></td><td><b>0.697</b></td><td>16.667</td></tr><tr><td>動作 — 處理速度</td><td>337</td><td>86</td><td>6.950 ± 0.26</td><td>7.136</td><td><b>0.579</b></td><td><b>0.761</b></td><td>11.382</td></tr></tbody></table>
+<h3>合成分數構成</h3>
+<table class='targets'><thead><tr><th>目標</th><th>組成子測驗</th><th>OLS R²</th></tr></thead><tbody><tr><td>語文 — 量尺總分</td><td><code>LANGUAGE_ST_SCALED_SIMILARITY, LANGUAGE_ST_SCALED_VOCABULARY, LANGUAGE_ST_SCALED_INFORMATION</code></td><td>1.000</td></tr><tr><td>記憶 — 聽覺立即</td><td><code>MEMORY_ST_SCALED_LogMemI, MEMORY_ST_SCALED_VerPairI</code></td><td>1.000</td></tr><tr><td>記憶 — 視覺立即</td><td><code>MEMORY_ST_SCALED_FacI, MEMORY_ST_SCALED_FamPicI</code></td><td>1.000</td></tr><tr><td>記憶 — 工作記憶</td><td><code>MEMORY_ST_SCALED_LetNumSeq, MEMORY_ST_SCALED_SpaTotal</code></td><td>1.000</td></tr><tr><td>動作 — 精細動作</td><td><code>MOTOR_ST_RAW_PegboardDominant, MOTOR_ST_RAW_PegboardNondominant, MOTOR_ST_RAW_PegboardBoth, MOTOR_ST_RAW_PegboardAssemble</code></td><td>1.000</td></tr><tr><td>動作 — 平衡</td><td><code>MOTOR_ST_RAW_FunctionalReaching, MOTOR_ST_RAW_BestLegEyeOpen, MOTOR_ST_RAW_WorseLegEyeOpen, MOTOR_ST_RAW_BestLegEyeClose, MOTOR_ST_RAW_WorseLegEyeClose</code></td><td>0.877</td></tr><tr><td>動作 — 處理速度</td><td><code>MOTOR_ST_RAW_SymbolSearch, MOTOR_ST_RAW_SymbolCoding</code></td><td>1.000</td></tr></tbody></table>
+<h3>各目標最具資訊量之模態區塊(Δ 測試 MAE)</h3>
+<table class='targets'><thead><tr><th>目標</th><th>區塊</th><th>Δ 測試 MAE</th><th>Δ 測試 R²</th></tr></thead><tbody><tr><td>語文 — 量尺總分</td><td>BEH</td><td>0.792</td><td>-0.072</td></tr><tr><td>記憶 — 聽覺立即</td><td>BEH</td><td>1.282</td><td>-0.146</td></tr><tr><td>記憶 — 視覺立即</td><td>BEH</td><td>0.619</td><td>-0.083</td></tr><tr><td>記憶 — 工作記憶</td><td>BEH</td><td>0.254</td><td>-0.064</td></tr><tr><td>動作 — 精細動作</td><td>BEH</td><td>0.135</td><td>-0.029</td></tr><tr><td>動作 — 平衡</td><td>BEH</td><td>0.247</td><td>-0.025</td></tr><tr><td>動作 — 處理速度</td><td>BEH</td><td>0.988</td><td>-0.107</td></tr></tbody></table>
+<h3>FDR<0.05 顯著的偏差相關變數數量(每目標 100 個變數)</h3>
+<table class='targets'><thead><tr><th>目標</th><th>偏差 SD</th><th>顯著數 (Q / ST)</th></tr></thead><tbody><tr><td>語文 — 量尺總分</td><td>19.17</td><td>71 (14 / 57)</td></tr><tr><td>記憶 — 聽覺立即</td><td>9.09</td><td>62 (12 / 50)</td></tr><tr><td>記憶 — 視覺立即</td><td>5.43</td><td>72 (14 / 58)</td></tr><tr><td>記憶 — 工作記憶</td><td>5.54</td><td>67 (14 / 53)</td></tr><tr><td>動作 — 精細動作</td><td>5.25</td><td>74 (14 / 60)</td></tr><tr><td>動作 — 平衡</td><td>9.67</td><td>69 (17 / 52)</td></tr><tr><td>動作 — 處理速度</td><td>6.85</td><td>71 (15 / 56)</td></tr></tbody></table>
+</section>
+<section id='norm'>
+<h2>NORM</h2>
+<p class='small'>在量尺加總之上由發行單位常模對照表轉換而得的指標(包含非線性查表)。</p>
+<h3>獨立測試集結果</h3>
+<table class='targets'><thead><tr><th>目標</th><th>n 訓練</th><th>n 測試</th><th>CV MAE</th><th>測試 MAE</th><th>測試 R²</th><th>測試 ρ</th><th>基準 MAE</th></tr></thead><tbody><tr><td>語文 — VCI</td><td>341</td><td>86</td><td>9.740 ± 0.96</td><td>10.143</td><td><b>0.156</b></td><td><b>0.431</b></td><td>11.148</td></tr><tr><td>記憶 — 聽覺立即</td><td>339</td><td>86</td><td>9.908 ± 0.39</td><td>10.287</td><td><b>0.088</b></td><td><b>0.389</b></td><td>11.201</td></tr><tr><td>記憶 — 視覺立即</td><td>339</td><td>86</td><td>10.864 ± 0.64</td><td>11.729</td><td><b>0.225</b></td><td><b>0.550</b></td><td>13.235</td></tr><tr><td>記憶 — 工作記憶</td><td>339</td><td>86</td><td>10.008 ± 0.52</td><td>9.247</td><td><b>0.083</b></td><td><b>0.301</b></td><td>10.128</td></tr></tbody></table>
+<h3>合成分數構成</h3>
+<table class='targets'><thead><tr><th>目標</th><th>組成子測驗</th><th>OLS R²</th></tr></thead><tbody><tr><td>語文 — VCI</td><td><code>LANGUAGE_ST_SCALED_SIMILARITY, LANGUAGE_ST_SCALED_VOCABULARY, LANGUAGE_ST_SCALED_INFORMATION</code></td><td>0.717</td></tr><tr><td>記憶 — 聽覺立即</td><td><code>MEMORY_ST_SCALED_LogMemI, MEMORY_ST_SCALED_VerPairI</code></td><td>0.370</td></tr><tr><td>記憶 — 視覺立即</td><td><code>MEMORY_ST_SCALED_FacI, MEMORY_ST_SCALED_FamPicI</code></td><td>0.252</td></tr><tr><td>記憶 — 工作記憶</td><td><code>MEMORY_ST_SCALED_LetNumSeq, MEMORY_ST_SCALED_SpaTotal</code></td><td>0.394</td></tr></tbody></table>
+<h3>各目標最具資訊量之模態區塊(Δ 測試 MAE)</h3>
+<table class='targets'><thead><tr><th>目標</th><th>區塊</th><th>Δ 測試 MAE</th><th>Δ 測試 R²</th></tr></thead><tbody><tr><td>語文 — VCI</td><td>DTI</td><td>0.186</td><td>-0.024</td></tr><tr><td>記憶 — 聽覺立即</td><td>BEH</td><td>0.254</td><td>-0.044</td></tr><tr><td>記憶 — 視覺立即</td><td>BEH</td><td>0.369</td><td>-0.046</td></tr><tr><td>記憶 — 工作記憶</td><td>BEH</td><td>0.246</td><td>-0.031</td></tr></tbody></table>
+<h3>FDR<0.05 顯著的偏差相關變數數量(每目標 100 個變數)</h3>
+<table class='targets'><thead><tr><th>目標</th><th>偏差 SD</th><th>顯著數 (Q / ST)</th></tr></thead><tbody><tr><td>語文 — VCI</td><td>4.03</td><td>65 (9 / 56)</td></tr><tr><td>記憶 — 聽覺立即</td><td>5.43</td><td>42 (3 / 39)</td></tr><tr><td>記憶 — 視覺立即</td><td>7.31</td><td>70 (13 / 57)</td></tr><tr><td>記憶 — 工作記憶</td><td>3.55</td><td>59 (8 / 51)</td></tr></tbody></table>
+</section>
 
 <footer>
-  原始碼:<code>tcnl2021-lab/quanta-st-composites</code>(私有儲存庫,
-  Pages 公開)。內部工作儲存庫:<code>Quanta_st_composites</code>。
+  原始碼:<code>tcnl2021-lab/quanta-st-composites</code>(公開)。
+  內部工作儲存庫:<code>Quanta_st_composites</code>。
   此 Demo 不附原始受試者特徵,僅提供去識別化、依位置索引的
-  預測向量、各目標指標摘要、模態消融表格,以及偏差相關性表格。
+  預測向量、各層次指標、模態消融表格、合成分數公式表,
+  以及 Zhang 校正偏差相關性表格。
 </footer>
 
 </body>

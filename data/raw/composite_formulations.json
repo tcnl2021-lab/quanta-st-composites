@@ -1,0 +1,68 @@
+{
+  "LANGUAGE_ST_RAW_SUM": {
+    "level": "RAW",
+    "description": "WAIS verbal raw composite",
+    "predictors": [
+      "LANGUAGE_ST_RAW_SIMILARITY",
+      "LANGUAGE_ST_RAW_VOCABULARY",
+      "LANGUAGE_ST_RAW_INFORMATION"
+    ],
+    "intercept": -4.5777140655604305e-14,
+    "coefficients": {
+      "LANGUAGE_ST_RAW_SIMILARITY": 1.000000000000001,
+      "LANGUAGE_ST_RAW_VOCABULARY": 0.9999999999999996,
+      "LANGUAGE_ST_RAW_INFORMATION": 0.9999999999999994
+    },
+    "r2": 1.0,
+    "n": 452,
+    "equation": "LANGUAGE_ST_RAW_SUM \u2248 -0.00 +1.000 \u00b7 LANGUAGE_ST_RAW_SIMILARITY +1.000 \u00b7 LANGUAGE_ST_RAW_VOCABULARY +1.000 \u00b7 LANGUAGE_ST_RAW_INFORMATION"
+  },
+  "MEMORY_ST_RAW_AudImm": {
+    "level": "RAW",
+    "description": "WMS Auditory Immediate raw composite",
+    "predictors": [
+      "MEMORY_ST_RAW_LogMemI",
+      "MEMORY_ST_RAW_VerPairI"
+    ],
+    "intercept": 2.3725789450399602e-14,
+    "coefficients": {
+      "MEMORY_ST_RAW_LogMemI": 0.9999999999999982,
+      "MEMORY_ST_RAW_VerPairI": 1.0000000000000009
+    },
+    "r2": 1.0,
+    "n": 425,
+    "equation": "MEMORY_ST_RAW_AudImm \u2248 +0.00 +1.000 \u00b7 MEMORY_ST_RAW_LogMemI +1.000 \u00b7 MEMORY_ST_RAW_VerPairI"
+  },
+  "MEMORY_ST_RAW_VisImm": {
+    "level": "RAW",
+    "description": "WMS Visual Immediate raw composite",
+    "predictors": [
+      "MEMORY_ST_RAW_FacI",
+      "MEMORY_ST_RAW_FamPicI"
+    ],
+    "intercept": 4.587531987464452e-14,
+    "coefficients": {
+      "MEMORY_ST_RAW_FacI": 0.9999999999999984,
+      "MEMORY_ST_RAW_FamPicI": 0.9999999999999998
+    },
+    "r2": 1.0,
+    "n": 425,
+    "equation": "MEMORY_ST_RAW_VisImm \u2248 +0.00 +1.000 \u00b7 MEMORY_ST_RAW_FacI +1.000 \u00b7 MEMORY_ST_RAW_FamPicI"
+  },
+  "MEMORY_ST_RAW_WorMem": {
+    "level": "RAW",
+    "description": "WMS Working Memory raw composite",
+    "predictors": [
+      "MEMORY_ST_RAW_LetNumSeq",
+      "MEMORY_ST_RAW_SpaTotal"
+    ],
+    "intercept": -1.5455686999356247e-14,
+    "coefficients": {
+      "MEMORY_ST_RAW_LetNumSeq": 0.9999999999999996,
+      "MEMORY_ST_RAW_SpaTotal": 1.0000000000000002
+    },
+    "r2": 1.0,
+    "n": 425,
+    "equation": "MEMORY_ST_RAW_WorMem \u2248 -0.00 +1.000 \u00b7 MEMORY_ST_RAW_LetNumSeq +1.000 \u00b7 MEMORY_ST_RAW_SpaTotal"
+  }
+}
