@@ -113,6 +113,10 @@
   modality blocks — but the targets are seven cognitive and motor composite
   scores (WAIS Verbal Comprehension Index, three Wechsler memory indices,
   and three motor composites) instead of chronological age.
+  <strong>Chronological age is intentionally excluded from the feature set</strong>
+  so the residual prediction reflects only brain + behaviour + sex; the
+  composite targets are already age-normed / age-scaled by their test
+  publishers.
 </p>
 
 <p>
@@ -135,19 +139,85 @@
     </tr>
   </thead>
   <tbody>
-    <tr><td>Motor — Processing Speed</td><td>6.93</td><td>7.02</td><td><b>0.593</b></td><td><b>0.770</b></td><td>-4.36</td></tr>
-    <tr><td>Motor — Fine Motor</td><td>6.38</td><td>5.35</td><td><b>0.547</b></td><td><b>0.749</b></td><td>-2.84</td></tr>
-    <tr><td>Motor — Balance</td><td>12.05</td><td>10.82</td><td><b>0.480</b></td><td><b>0.699</b></td><td>-5.85</td></tr>
-    <tr><td>Memory — Visual Immediate</td><td>10.77</td><td>11.51</td><td>0.247</td><td>0.573</td><td>-1.72</td></tr>
-    <tr><td>Language — VCI</td><td>9.76</td><td>10.19</td><td>0.153</td><td>0.438</td><td>-0.96</td></tr>
-    <tr><td>Memory — Auditory Immediate</td><td>9.77</td><td>10.23</td><td>0.104</td><td>0.409</td><td>-0.97</td></tr>
-    <tr><td>Memory — Working Memory</td><td>9.88</td><td>9.39</td><td>0.069</td><td>0.283</td><td>-0.74</td></tr>
+    <tr><td>Motor — Processing Speed</td><td>6.95</td><td>7.14</td><td><b>0.579</b></td><td><b>0.761</b></td><td>-4.25</td></tr>
+    <tr><td>Motor — Fine Motor</td><td>6.43</td><td>5.30</td><td><b>0.549</b></td><td><b>0.745</b></td><td>-2.89</td></tr>
+    <tr><td>Motor — Balance</td><td>12.27</td><td>10.97</td><td><b>0.476</b></td><td><b>0.697</b></td><td>-5.70</td></tr>
+    <tr><td>Memory — Visual Immediate</td><td>10.86</td><td>11.73</td><td>0.225</td><td>0.550</td><td>-1.51</td></tr>
+    <tr><td>Language — VCI</td><td>9.74</td><td>10.14</td><td>0.156</td><td>0.431</td><td>-1.00</td></tr>
+    <tr><td>Memory — Auditory Immediate</td><td>9.91</td><td>10.29</td><td>0.088</td><td>0.389</td><td>-0.91</td></tr>
+    <tr><td>Memory — Working Memory</td><td>10.01</td><td>9.25</td><td>0.083</td><td>0.301</td><td>-0.88</td></tr>
   </tbody>
 </table>
 <p class="small">
   CV MAE: 5-fold cross-validated MAE on the 341 training subjects.
   Baseline = training-mean predictor; Δ is held-out MAE minus that baseline.
   All seven targets beat the training-mean baseline on the held-out 86.
+</p>
+
+<h2>Composite formulations</h2>
+<p>
+  Each composite target is a summary index that the test publisher computes
+  from underlying subtests. We regressed every target on its plausible
+  component subtests; the fit is exact for the linearly-scored motor
+  composites and approximate for the WAIS / WMS norm indices because the
+  publishers' raw → scaled → norm transformation includes a non-linear
+  lookup-table step.
+</p>
+<table class="targets">
+  <thead>
+    <tr><th>Target</th><th>Components</th><th>OLS R²</th><th>Implicit formulation</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Language — VCI</td>
+      <td>three WAIS scaled subtests</td>
+      <td>0.72</td>
+      <td>64.93 + 0.140·Similarity + 0.401·Vocabulary + 0.244·Information</td>
+    </tr>
+    <tr>
+      <td>Memory — Auditory Imm.</td>
+      <td>WMS auditory scaled subtests</td>
+      <td>0.37</td>
+      <td>77.60 + 0.292·LogMemI + 0.194·VerPairI</td>
+    </tr>
+    <tr>
+      <td>Memory — Visual Imm.</td>
+      <td>WMS visual scaled subtests</td>
+      <td>0.25</td>
+      <td>53.61 + 0.490·FacI + 0.281·FamPicI</td>
+    </tr>
+    <tr>
+      <td>Memory — Working Memory</td>
+      <td>LetterNumberSeq + Spatial Total</td>
+      <td>0.39</td>
+      <td>69.92 + 0.369·LetNumSeq + 0.370·SpaTotal</td>
+    </tr>
+    <tr>
+      <td>Motor — Fine Motor</td>
+      <td>4 Pegboard raw subtests</td>
+      <td><b>1.00</b></td>
+      <td>0.833·(PegDom + PegNonDom + PegBoth + PegAssemble)</td>
+    </tr>
+    <tr>
+      <td>Motor — Balance</td>
+      <td>functional reach + 4 single-leg-stance raw items</td>
+      <td>0.88</td>
+      <td>33.4 + 1.747·BestLegEyeClose + smaller contributions from the other four stance items</td>
+    </tr>
+    <tr>
+      <td>Motor — Processing Speed</td>
+      <td>Symbol Search + Symbol Coding raw</td>
+      <td><b>1.00</b></td>
+      <td>0.833·SymbolSearch + 0.370·SymbolCoding</td>
+    </tr>
+  </tbody>
+</table>
+<p class="small">
+  Fits computed by <code>codes/st_composites/analyze_composite_formulations.py</code>
+  on the full Quanta sample (n ≈ 413–452 with complete cases per target).
+  None of these component subtests is ever an input to the held-out
+  prediction model — they are listed only to make the targets' internal
+  structure explicit.
 </p>
 
 <h2>Composite-score design</h2>
@@ -173,21 +243,21 @@
     <tr><th>Composite</th><th>Most informative block (Δ test MAE)</th></tr>
   </thead>
   <tbody>
-    <tr><td>Motor — Processing Speed</td><td>BEH (+0.81)</td></tr>
-    <tr><td>Memory — Visual Immediate</td><td>DEMO (+0.34)</td></tr>
-    <tr><td>Memory — Auditory Immediate</td><td>BEH (+0.26)</td></tr>
+    <tr><td>Motor — Processing Speed</td><td>BEH (+0.99)</td></tr>
+    <tr><td>Memory — Visual Immediate</td><td>BEH (+0.37)</td></tr>
+    <tr><td>Memory — Auditory Immediate</td><td>BEH (+0.25)</td></tr>
+    <tr><td>Motor — Balance</td><td>BEH (+0.25)</td></tr>
+    <tr><td>Memory — Working Memory</td><td>BEH (+0.25)</td></tr>
     <tr><td>Language — VCI</td><td>DTI (+0.19)</td></tr>
-    <tr><td>Motor — Balance</td><td>DEMO (+0.15)</td></tr>
-    <tr><td>Memory — Working Memory</td><td>BEH (+0.10)</td></tr>
-    <tr><td>Motor — Fine Motor</td><td>BEH (+0.10)</td></tr>
+    <tr><td>Motor — Fine Motor</td><td>BEH (+0.13)</td></tr>
   </tbody>
 </table>
 <p class="small">
-  Behaviour features dominate four of seven targets; demographics dominate
-  Visual Memory and Balance; DTI is the most informative single block for
-  the language composite. EEG, MRI, deep features, and rs-fMRI FC PCA
-  contribute marginally in this stacked configuration because the
-  per-block ridge OOFs share most of their age and general-ability signal.
+  With chronological age excluded from the inputs, behaviour features
+  dominate six of seven targets; DTI is the most informative single block
+  for the language composite. EEG, MRI, deep features, rs-fMRI FC PCA, and
+  the sex covariate contribute marginally in this stacked configuration —
+  the per-block ridge OOFs share most of their general-ability signal.
 </p>
 
 <h2>Composite-prediction deviation (Zhang-corrected)</h2>
@@ -201,7 +271,7 @@
 </p>
 <p>
   After Benjamini-Hochberg FDR correction across the 100 features tested per
-  target, each composite has 58–75 FDR-significant correlates. Strong
+  target, each composite has 41–74 FDR-significant correlates. Strong
   recurring patterns:
 </p>
 <ul>
@@ -225,7 +295,8 @@
   <li><strong>Cohort.</strong> 427 healthy adults, age 19–80, TCNL Quanta multimodal ageing study.</li>
   <li><strong>Modalities.</strong> behaviour (199) · EEG morphology + PSD (659) ·
       T1-w MRI morphometry (1094) · DTI ROI (90 FA + MD) · deep features (71;
-      SFCN + Pyment) · rs-fMRI Schaefer-400 FC PCA-50 · age + sex.</li>
+      SFCN + Pyment) · rs-fMRI Schaefer-400 FC PCA-50 · sex (1).
+      Chronological age is intentionally <em>not</em> a feature.</li>
   <li><strong>Stack.</strong> Per-block RidgeCV out-of-fold predictions →
       RidgeCV meta-learner. 5-fold inner CV; refit on the full 341 training
       subjects for the held-out prediction.</li>

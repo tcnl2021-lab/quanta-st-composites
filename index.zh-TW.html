@@ -112,6 +112,9 @@
   年齡 × 性別分層分割（訓練 341 人、保留 86 人）。模態區塊相同,但
   預測目標改為七項認知與動作合成分數（WAIS 語文理解指標、三項 Wechsler
   記憶指標、三項動作合成分數）而非實際年齡。
+  <strong>實際年齡刻意不納入特徵集</strong>,
+  以便殘餘預測力僅反映腦影像、行為與性別之貢獻;
+  本分析所用之合成分數已由原測驗發行單位完成年齡常模化或量尺化。
 </p>
 
 <p>
@@ -134,19 +137,83 @@
     </tr>
   </thead>
   <tbody>
-    <tr><td>動作 — 處理速度</td><td>6.93</td><td>7.02</td><td><b>0.593</b></td><td><b>0.770</b></td><td>−4.36</td></tr>
-    <tr><td>動作 — 精細動作</td><td>6.38</td><td>5.35</td><td><b>0.547</b></td><td><b>0.749</b></td><td>−2.84</td></tr>
-    <tr><td>動作 — 平衡</td><td>12.05</td><td>10.82</td><td><b>0.480</b></td><td><b>0.699</b></td><td>−5.85</td></tr>
-    <tr><td>記憶 — 視覺立即</td><td>10.77</td><td>11.51</td><td>0.247</td><td>0.573</td><td>−1.72</td></tr>
-    <tr><td>語文 — VCI 語文理解</td><td>9.76</td><td>10.19</td><td>0.153</td><td>0.438</td><td>−0.96</td></tr>
-    <tr><td>記憶 — 聽覺立即</td><td>9.77</td><td>10.23</td><td>0.104</td><td>0.409</td><td>−0.97</td></tr>
-    <tr><td>記憶 — 工作記憶</td><td>9.88</td><td>9.39</td><td>0.069</td><td>0.283</td><td>−0.74</td></tr>
+    <tr><td>動作 — 處理速度</td><td>6.95</td><td>7.14</td><td><b>0.579</b></td><td><b>0.761</b></td><td>−4.25</td></tr>
+    <tr><td>動作 — 精細動作</td><td>6.43</td><td>5.30</td><td><b>0.549</b></td><td><b>0.745</b></td><td>−2.89</td></tr>
+    <tr><td>動作 — 平衡</td><td>12.27</td><td>10.97</td><td><b>0.476</b></td><td><b>0.697</b></td><td>−5.70</td></tr>
+    <tr><td>記憶 — 視覺立即</td><td>10.86</td><td>11.73</td><td>0.225</td><td>0.550</td><td>−1.51</td></tr>
+    <tr><td>語文 — VCI 語文理解</td><td>9.74</td><td>10.14</td><td>0.156</td><td>0.431</td><td>−1.00</td></tr>
+    <tr><td>記憶 — 聽覺立即</td><td>9.91</td><td>10.29</td><td>0.088</td><td>0.389</td><td>−0.91</td></tr>
+    <tr><td>記憶 — 工作記憶</td><td>10.01</td><td>9.25</td><td>0.083</td><td>0.301</td><td>−0.88</td></tr>
   </tbody>
 </table>
 <p class="small">
   CV MAE：以 341 名訓練受試者進行的 5-fold 交叉驗證平均 MAE。
   基準 = 訓練樣本平均值預測;Δ 為測試集 MAE 減去該基準。
   七項目標在 86 名保留樣本上皆優於訓練平均基準。
+</p>
+
+<h2>合成分數構成方式</h2>
+<p>
+  每一個目標合成分數均為測驗發行單位由其底層子測驗計算而得的綜合指標。
+  以下將每個目標合成分數對其推測之子測驗組成作線性迴歸,
+  動作合成分數因採線性加權計分,可完全還原;
+  WAIS / WMS 之常模化指標因發行單位使用「原始 → 量尺 → 常模」之
+  非線性對照表轉換,故僅能近似還原。
+</p>
+<table class="targets">
+  <thead>
+    <tr><th>目標</th><th>組成子測驗</th><th>OLS R²</th><th>近似公式</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>語文 — VCI</td>
+      <td>三項 WAIS 量尺分數</td>
+      <td>0.72</td>
+      <td>64.93 + 0.140·Similarity + 0.401·Vocabulary + 0.244·Information</td>
+    </tr>
+    <tr>
+      <td>記憶 — 聽覺立即</td>
+      <td>WMS 聽覺量尺子分數</td>
+      <td>0.37</td>
+      <td>77.60 + 0.292·LogMemI + 0.194·VerPairI</td>
+    </tr>
+    <tr>
+      <td>記憶 — 視覺立即</td>
+      <td>WMS 視覺量尺子分數</td>
+      <td>0.25</td>
+      <td>53.61 + 0.490·FacI + 0.281·FamPicI</td>
+    </tr>
+    <tr>
+      <td>記憶 — 工作記憶</td>
+      <td>LetterNumberSeq + Spatial Total</td>
+      <td>0.39</td>
+      <td>69.92 + 0.369·LetNumSeq + 0.370·SpaTotal</td>
+    </tr>
+    <tr>
+      <td>動作 — 精細動作</td>
+      <td>四項 Pegboard 原始分數</td>
+      <td><b>1.00</b></td>
+      <td>0.833·(PegDom + PegNonDom + PegBoth + PegAssemble)</td>
+    </tr>
+    <tr>
+      <td>動作 — 平衡</td>
+      <td>功能性伸展 + 四項單腳站立原始分</td>
+      <td>0.88</td>
+      <td>33.4 + 1.747·BestLegEyeClose + 其他四項單腳站立小幅貢獻</td>
+    </tr>
+    <tr>
+      <td>動作 — 處理速度</td>
+      <td>Symbol Search + Symbol Coding 原始分</td>
+      <td><b>1.00</b></td>
+      <td>0.833·SymbolSearch + 0.370·SymbolCoding</td>
+    </tr>
+  </tbody>
+</table>
+<p class="small">
+  公式由 <code>codes/st_composites/analyze_composite_formulations.py</code>
+  在完整 Quanta 樣本(各目標 n ≈ 413–452 個完整案例)上以 OLS 擬合得到。
+  上述子測驗本身<strong>不曾</strong>作為模型輸入特徵,
+  此處僅供呈現各目標合成分數之內部結構。
 </p>
 
 <h2>合成分數設計</h2>
@@ -172,20 +239,20 @@
     <tr><th>合成分數</th><th>最有資訊量的區塊(Δ 測試 MAE)</th></tr>
   </thead>
   <tbody>
-    <tr><td>動作 — 處理速度</td><td>BEH 行為(+0.81)</td></tr>
-    <tr><td>記憶 — 視覺立即</td><td>DEMO 年齡+性別(+0.34)</td></tr>
-    <tr><td>記憶 — 聽覺立即</td><td>BEH 行為(+0.26)</td></tr>
+    <tr><td>動作 — 處理速度</td><td>BEH 行為(+0.99)</td></tr>
+    <tr><td>記憶 — 視覺立即</td><td>BEH 行為(+0.37)</td></tr>
+    <tr><td>記憶 — 聽覺立即</td><td>BEH 行為(+0.25)</td></tr>
+    <tr><td>動作 — 平衡</td><td>BEH 行為(+0.25)</td></tr>
+    <tr><td>記憶 — 工作記憶</td><td>BEH 行為(+0.25)</td></tr>
     <tr><td>語文 — VCI</td><td>DTI 白質結構(+0.19)</td></tr>
-    <tr><td>動作 — 平衡</td><td>DEMO(+0.15)</td></tr>
-    <tr><td>記憶 — 工作記憶</td><td>BEH(+0.10)</td></tr>
-    <tr><td>動作 — 精細動作</td><td>BEH(+0.10)</td></tr>
+    <tr><td>動作 — 精細動作</td><td>BEH 行為(+0.13)</td></tr>
   </tbody>
 </table>
 <p class="small">
-  七個目標中有四個由行為特徵主導;視覺記憶與平衡由年齡 / 性別主導;
+  在實際年齡未進入特徵之設定下,七個目標中有六個由行為特徵主導;
   DTI 白質區塊則為語文合成分數最有資訊量的單一模態。
-  在此堆疊設定下,EEG、MRI、深度特徵與 rs-fMRI FC PCA 的邊際貢獻較小,
-  原因為各區塊之 RidgeCV OOF 已大量共享年齡與一般能力訊號。
+  EEG、MRI、深度特徵、rs-fMRI FC PCA 與性別共變項之邊際貢獻較小,
+  原因為各區塊之 RidgeCV OOF 已大量共享一般能力訊號。
 </p>
 
 <h2>合成分數預測偏差(Zhang 校正)</h2>
@@ -197,7 +264,7 @@
 </p>
 <p>
   經 Benjamini-Hochberg FDR 校正(每個目標 100 個變數同時測試),
-  每個合成分數皆有 58–75 個 FDR-顯著相關變數。常見的主題包括:
+  每個合成分數皆有 41–74 個 FDR-顯著相關變數。常見的主題包括:
 </p>
 <ul>
   <li>SF-36 活力分數 與 動作合成偏差呈負相關(預測過低者,自陳活力較低)。</li>
@@ -217,7 +284,8 @@
   <li><strong>受試者。</strong>427 位健康成人,年齡 19–80 歲,TCNL Quanta 多模態老化研究。</li>
   <li><strong>模態。</strong>行為(199)・EEG 形態與功率譜(659)・T1 加權 MRI 形態量化(1094)・
       DTI ROI(45 FA + 45 MD)・深度特徵(71;SFCN + Pyment)・
-      rs-fMRI Schaefer-400 FC PCA-50・年齡 + 性別。</li>
+      rs-fMRI Schaefer-400 FC PCA-50・性別(1)。
+      實際年齡刻意<em>未</em>納入特徵集。</li>
   <li><strong>模型架構。</strong>各模態區塊以 RidgeCV 產生 out-of-fold 預測 →
       RidgeCV 後設學習器堆疊。內部 5-fold CV;以全部 341 訓練受試者
       重新擬合後,對保留樣本進行單次預測。</li>
