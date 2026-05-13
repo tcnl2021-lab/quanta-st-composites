@@ -63,8 +63,8 @@ def load_deviation_corr(level: str) -> pd.DataFrame:
 
 
 @st.cache_data
-def load_deviation_zhang(level: str) -> tuple[pd.DataFrame, list[str]]:
-    npz = np.load(DATA_ROOT / level.lower() / "deviation_zhang.npz", allow_pickle=True)
+def load_deviation(level: str) -> tuple[pd.DataFrame, list[str]]:
+    npz = np.load(DATA_ROOT / level.lower() / "deviation.npz", allow_pickle=True)
     names = list(npz["target_names"])
     row = npz["subject"].astype(str)
     is_test = npz["is_test"].astype(bool)
@@ -75,7 +75,7 @@ def load_deviation_zhang(level: str) -> tuple[pd.DataFrame, list[str]]:
             "row": row, "target": name,
             "y_true": npz["y_true"][:, ti],
             "pred": npz["pred_full"][:, ti],
-            "deviation_zhang": npz["deviation"][:, ti],
+            "deviation": npz["deviation"][:, ti],
             "fold": fold, "is_test": is_test,
             "split": np.where(is_test, "Held-out test (n=86)", "Train CV OOF (n=341)"),
         }))
@@ -187,20 +187,26 @@ with st.sidebar:
 preds, _ = load_predictions(chosen_level)
 ablation = load_ablation(chosen_level)
 dev_corr = load_deviation_corr(chosen_level)
-zhang, _ = load_deviation_zhang(chosen_level)
+dev_npz, _ = load_deviation(chosen_level)
 formulations = load_formulations(chosen_level)
 
 # ── headline metrics ─────────────────────────────────────────────────────────
 row = summary[summary["target"] == chosen].iloc[0]
-c1, c2, c3, c4, c5 = st.columns(5)
-c1.metric("Train-CV MAE", f"{row['cv_mae']:.2f}", f"± {row['cv_mae_std']:.2f}")
-c2.metric(
-    "Held-out MAE", f"{row['test_mae']:.2f}",
-    f"vs mean-baseline {row['test_mae']-row['test_mae_baseline']:+.2f}",
+c1, c2, c3, c4, c5, c6 = st.columns(6)
+c1.metric(
+    "y range (train)",
+    f"[{row['y_train_min']:.2f}, {row['y_train_max']:.2f}]",
+    f"span {row['y_train_range']:.2f}, SD {row['y_train_std']:.2f}",
 )
-c3.metric("Held-out R²", f"{row['test_r2']:.3f}", f"baseline R² {row['test_r2_baseline']:+.3f}")
-c4.metric("Held-out Pearson ρ", f"{row['test_pearson']:.3f}")
-c5.metric("n_test with y", f"{int(row['n_test_with_y'])}/86")
+c2.metric("Train-CV MAE", f"{row['cv_mae']:.2f}", f"± {row['cv_mae_std']:.2f}")
+c3.metric(
+    "Held-out MAE",
+    f"{row['test_mae']:.2f}",
+    f"{row['test_mae_pct_of_range']:.1f}% of range",
+)
+c4.metric("Held-out R²", f"{row['test_r2']:.3f}", f"baseline R² {row['test_r2_baseline']:+.3f}")
+c5.metric("Held-out ρ", f"{row['test_pearson']:.3f}")
+c6.metric("n_test with y", f"{int(row['n_test_with_y'])}/86")
 
 tabs = st.tabs([
     "Predicted vs true",
@@ -246,15 +252,25 @@ with tabs[1]:
     st.subheader(f"All targets at level {chosen_level}")
     df = summary.copy()
     df["target_label"] = df["target"].map(SHORT).fillna(df["target"])
-    df_disp = df[["target_label", "n_train", "n_test_with_y",
-                  "cv_mae", "cv_mae_std", "test_mae", "test_rmse",
-                  "test_r2", "test_pearson", "test_mae_baseline", "test_r2_baseline"]].copy()
-    for c in df_disp.columns:
-        if df_disp[c].dtype.kind == "f":
-            df_disp[c] = df_disp[c].map(lambda v: f"{v:.3f}")
-    df_disp.columns = ["Target", "n train", "n test", "CV MAE", "CV SD",
-                       "Test MAE", "Test RMSE", "Test R²", "Test ρ",
-                       "Baseline MAE", "Baseline R²"]
+    df["y_range_text"] = df.apply(
+        lambda r: f"[{r['y_train_min']:.2f}, {r['y_train_max']:.2f}]  "
+                  f"(span {r['y_train_range']:.2f}, SD {r['y_train_std']:.2f})",
+        axis=1,
+    )
+    df_disp = df[[
+        "target_label", "n_train", "n_test_with_y", "y_range_text",
+        "cv_mae", "cv_mae_std",
+        "test_mae", "test_mae_pct_of_range", "test_rmse",
+        "test_r2", "test_pearson", "test_mae_baseline", "test_r2_baseline",
+    ]].copy()
+    for c in ("cv_mae", "cv_mae_std", "test_mae", "test_rmse",
+              "test_r2", "test_pearson", "test_mae_baseline", "test_r2_baseline"):
+        df_disp[c] = df_disp[c].map(lambda v: f"{v:.3f}")
+    df_disp["test_mae_pct_of_range"] = df_disp["test_mae_pct_of_range"].map(lambda v: f"{v:.1f}%")
+    df_disp.columns = ["Target", "n train", "n test", "y range (train)",
+                       "CV MAE", "CV SD",
+                       "Test MAE", "MAE / range", "Test RMSE",
+                       "Test R²", "Test ρ", "Baseline MAE", "Baseline R²"]
     st.dataframe(df_disp, hide_index=True, width="stretch")
 
     fig = px.bar(
@@ -360,20 +376,26 @@ with tabs[3]:
 
 # ── tab 5: deviation correlations ────────────────────────────────────────────
 with tabs[4]:
-    st.subheader(f"Zhang-corrected deviation correlations — {chosen_label} [{chosen_level}]")
+    st.subheader(f"Directional deviation correlations (pred − actual) — {chosen_label} [{chosen_level}]")
     st.caption(
-        "Per-subject (pred − bias-corrected reference) deviation correlated against the "
-        "30 BASIC_Q_* questionnaire columns and the unused _ST_ measures. "
-        "Significance flag uses Benjamini-Hochberg FDR across the features tested per target."
+        "Per-subject signed residual `deviation = pred − actual` correlated against "
+        "the 30 BASIC_Q_* questionnaire columns and the unused _ST_ measures at the "
+        "same score level. Significance flag uses Benjamini-Hochberg FDR across the "
+        "features tested per target.\n\n"
+        "⚠ The raw residual carries regression-to-mean — the slope of deviation vs. "
+        "true score is typically negative (low scorers over-predicted, high scorers "
+        "under-predicted). The slope_vs_true column in the deviation_summary indicates "
+        "how strong this is per target; values near −1 mean the model explains almost "
+        "no variance in y."
     )
 
-    z = zhang[zhang["target"] == chosen].dropna(subset=["deviation_zhang", "y_true"])
+    z = dev_npz[dev_npz["target"] == chosen].dropna(subset=["deviation", "y_true"])
     c1, c2 = st.columns(2)
     with c1:
         fig = px.scatter(
-            z, x="y_true", y="deviation_zhang", color="split", symbol="split",
+            z, x="y_true", y="deviation", color="split", symbol="split",
             hover_data={"fold": True, "row": True, "split": False},
-            labels={"y_true": "True composite score", "deviation_zhang": "Zhang-corrected deviation"},
+            labels={"y_true": "True composite score", "deviation": "Directional residual (pred − actual)"},
             color_discrete_map={
                 "Train CV OOF (n=341)": "#7aa6c2",
                 "Held-out test (n=86)": "#d2766b",
@@ -385,12 +407,12 @@ with tabs[4]:
         st.plotly_chart(fig, width="stretch")
     with c2:
         fig2 = px.histogram(
-            z, x="deviation_zhang", color="split", nbins=40, opacity=0.7,
+            z, x="deviation", color="split", nbins=40, opacity=0.7,
             color_discrete_map={
                 "Train CV OOF (n=341)": "#7aa6c2",
                 "Held-out test (n=86)": "#d2766b",
             },
-            labels={"deviation_zhang": "Zhang-corrected deviation"},
+            labels={"deviation": "Directional residual (pred − actual)"},
         )
         fig2.update_layout(height=420, margin=dict(l=10, r=10))
         st.plotly_chart(fig2, width="stretch")
@@ -409,7 +431,7 @@ with tabs[4]:
         filt, x="pearson_r", y="feature", orientation="h",
         color="category",
         text=filt["pearson_r"].map(lambda v: f"{v:+.2f}"),
-        labels={"pearson_r": "Pearson r vs Zhang-corrected deviation", "feature": ""},
+        labels={"pearson_r": "Pearson r vs Directional residual (pred − actual)", "feature": ""},
         color_discrete_map={"Q": "#6e9a7a", "ST": "#a47bb5"},
     )
     fig3.update_layout(height=max(360, 22 * len(filt)), margin=dict(l=10, r=10))
