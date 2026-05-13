@@ -192,21 +192,38 @@ formulations = load_formulations(chosen_level)
 
 # ── headline metrics ─────────────────────────────────────────────────────────
 row = summary[summary["target"] == chosen].iloc[0]
-c1, c2, c3, c4, c5, c6 = st.columns(6)
-c1.metric(
-    "y range (train)",
-    f"[{row['y_train_min']:.2f}, {row['y_train_max']:.2f}]",
-    f"span {row['y_train_range']:.2f}, SD {row['y_train_std']:.2f}",
+
+
+def _get(name, default=float("nan")):
+    """Fetch a column from the headline `row` with a safe fallback so the app
+    still renders against older holdout_summary.csv copies that may be cached
+    by Streamlit Cloud after a deploy."""
+    return row[name] if name in row.index else default
+
+
+have_range = "y_train_min" in row.index
+have_pct = "test_mae_pct_of_range" in row.index
+n_cols = 6 if have_range else 5
+cols = st.columns(n_cols)
+i = 0
+if have_range:
+    cols[i].metric(
+        "y range (train)",
+        f"[{_get('y_train_min'):.2f}, {_get('y_train_max'):.2f}]",
+        f"span {_get('y_train_range'):.2f}, SD {_get('y_train_std'):.2f}",
+    )
+    i += 1
+cols[i].metric("Train-CV MAE", f"{_get('cv_mae'):.2f}", f"± {_get('cv_mae_std'):.2f}")
+i += 1
+test_mae_label = (
+    f"{_get('test_mae_pct_of_range'):.1f}% of range"
+    if have_pct
+    else f"vs mean-baseline {_get('test_mae') - _get('test_mae_baseline'):+.2f}"
 )
-c2.metric("Train-CV MAE", f"{row['cv_mae']:.2f}", f"± {row['cv_mae_std']:.2f}")
-c3.metric(
-    "Held-out MAE",
-    f"{row['test_mae']:.2f}",
-    f"{row['test_mae_pct_of_range']:.1f}% of range",
-)
-c4.metric("Held-out R²", f"{row['test_r2']:.3f}", f"baseline R² {row['test_r2_baseline']:+.3f}")
-c5.metric("Held-out ρ", f"{row['test_pearson']:.3f}")
-c6.metric("n_test with y", f"{int(row['n_test_with_y'])}/86")
+cols[i].metric("Held-out MAE", f"{_get('test_mae'):.2f}", test_mae_label); i += 1
+cols[i].metric("Held-out R²", f"{_get('test_r2'):.3f}", f"baseline R² {_get('test_r2_baseline'):+.3f}"); i += 1
+cols[i].metric("Held-out ρ", f"{_get('test_pearson'):.3f}"); i += 1
+cols[i].metric("n_test with y", f"{int(_get('n_test_with_y'))}/86")
 
 tabs = st.tabs([
     "Predicted vs true",
@@ -252,25 +269,37 @@ with tabs[1]:
     st.subheader(f"All targets at level {chosen_level}")
     df = summary.copy()
     df["target_label"] = df["target"].map(SHORT).fillna(df["target"])
-    df["y_range_text"] = df.apply(
-        lambda r: f"[{r['y_train_min']:.2f}, {r['y_train_max']:.2f}]  "
-                  f"(span {r['y_train_range']:.2f}, SD {r['y_train_std']:.2f})",
-        axis=1,
-    )
-    df_disp = df[[
-        "target_label", "n_train", "n_test_with_y", "y_range_text",
-        "cv_mae", "cv_mae_std",
-        "test_mae", "test_mae_pct_of_range", "test_rmse",
-        "test_r2", "test_pearson", "test_mae_baseline", "test_r2_baseline",
-    ]].copy()
-    for c in ("cv_mae", "cv_mae_std", "test_mae", "test_rmse",
-              "test_r2", "test_pearson", "test_mae_baseline", "test_r2_baseline"):
-        df_disp[c] = df_disp[c].map(lambda v: f"{v:.3f}")
-    df_disp["test_mae_pct_of_range"] = df_disp["test_mae_pct_of_range"].map(lambda v: f"{v:.1f}%")
-    df_disp.columns = ["Target", "n train", "n test", "y range (train)",
-                       "CV MAE", "CV SD",
-                       "Test MAE", "MAE / range", "Test RMSE",
-                       "Test R²", "Test ρ", "Baseline MAE", "Baseline R²"]
+    has_range_cols = "y_train_min" in df.columns
+    if has_range_cols:
+        df["y_range_text"] = df.apply(
+            lambda r: f"[{r['y_train_min']:.2f}, {r['y_train_max']:.2f}]  "
+                      f"(span {r['y_train_range']:.2f}, SD {r['y_train_std']:.2f})",
+            axis=1,
+        )
+        wanted = ["target_label", "n_train", "n_test_with_y", "y_range_text",
+                  "cv_mae", "cv_mae_std",
+                  "test_mae", "test_mae_pct_of_range", "test_rmse",
+                  "test_r2", "test_pearson", "test_mae_baseline", "test_r2_baseline"]
+        labels = ["Target", "n train", "n test", "y range (train)",
+                  "CV MAE", "CV SD",
+                  "Test MAE", "MAE / range", "Test RMSE",
+                  "Test R²", "Test ρ", "Baseline MAE", "Baseline R²"]
+    else:
+        wanted = ["target_label", "n_train", "n_test_with_y",
+                  "cv_mae", "cv_mae_std",
+                  "test_mae", "test_rmse",
+                  "test_r2", "test_pearson", "test_mae_baseline", "test_r2_baseline"]
+        labels = ["Target", "n train", "n test",
+                  "CV MAE", "CV SD", "Test MAE", "Test RMSE",
+                  "Test R²", "Test ρ", "Baseline MAE", "Baseline R²"]
+    df_disp = df[wanted].copy()
+    float_cols = [c for c in df_disp.columns if df_disp[c].dtype.kind == "f"]
+    for c in float_cols:
+        if c == "test_mae_pct_of_range":
+            df_disp[c] = df_disp[c].map(lambda v: f"{v:.1f}%")
+        else:
+            df_disp[c] = df_disp[c].map(lambda v: f"{v:.3f}")
+    df_disp.columns = labels
     st.dataframe(df_disp, hide_index=True, width="stretch")
 
     fig = px.bar(
