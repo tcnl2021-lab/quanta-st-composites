@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Standardised-test composite prediction — TCNL Lab</title>
+<style>
+  :root {
+    --ink: #1d2530;
+    --fade: #5b6470;
+    --card: #f7f7f3;
+    --accent: #5a6c80;
+    --rule: #dcdcd6;
+    --hover: #eef2f6;
+    --good: #6ea88a;
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                 "Helvetica Neue", Arial, sans-serif;
+    color: var(--ink);
+    max-width: 820px;
+    margin: 3rem auto 6rem;
+    padding: 0 1.4rem;
+    line-height: 1.55;
+    background: #fcfcfa;
+  }
+  h1 { font-size: 1.85rem; margin: 0 0 0.25rem; letter-spacing: -0.01em; }
+  h2 { font-size: 1.1rem; margin: 2.2rem 0 0.6rem; letter-spacing: -0.005em; }
+  .tag {
+    display: inline-block; font-size: 0.72rem;
+    background: var(--accent); color: white;
+    padding: 2px 7px; border-radius: 3px;
+    letter-spacing: 0.02em; margin-bottom: 0.55rem;
+  }
+  .subtitle { color: var(--fade); font-size: 0.96rem; margin: 0 0 2rem; }
+
+  .targets {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.0rem 0 1.6rem;
+    font-size: 0.92rem;
+  }
+  .targets th, .targets td {
+    padding: 0.45rem 0.6rem;
+    border-bottom: 1px solid var(--rule);
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  .targets th:first-child, .targets td:first-child { text-align: left; }
+  .targets th { color: var(--fade); font-weight: 500; font-size: 0.82rem;
+                text-transform: uppercase; letter-spacing: 0.03em; }
+  .targets tr.head td { font-weight: 600; }
+
+  .cta {
+    display: inline-block; background: var(--accent); color: white;
+    padding: 0.65rem 1.15rem; border-radius: 6px;
+    text-decoration: none; font-size: 0.95rem; font-weight: 500;
+    margin-top: 0.4rem;
+    transition: background 0.15s, transform 0.15s;
+  }
+  .cta:hover { background: #475765; transform: translateY(-1px); }
+  .cta .arrow { margin-left: 0.4rem; }
+
+  p { margin: 0.6rem 0; }
+  ul { padding-left: 1.2rem; }
+  li { margin: 0.25rem 0; }
+  code { background: var(--card); padding: 1px 5px; border-radius: 3px;
+         font-size: 0.88em; }
+  a { color: #356ea6; }
+
+  footer {
+    margin-top: 3rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--rule);
+    font-size: 0.82rem;
+    color: var(--fade);
+  }
+
+  .badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 0.78rem; color: #4a5663;
+    background: #eef1ee; border: 1px solid var(--rule);
+    padding: 3px 10px; border-radius: 999px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-variant-numeric: tabular-nums;
+  }
+  .badge::before {
+    content: ""; width: 6px; height: 6px;
+    border-radius: 50%; background: var(--good); display: inline-block;
+  }
+  .small { font-size: 0.82rem; color: var(--fade); }
+  .topbar {
+    display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+    font-size: 0.82rem; color: var(--fade);
+    margin: 0 0 1.4rem;
+  }
+  .topbar a { color: #356ea6; text-decoration: none; }
+  .topbar a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="https://tcnl2021-lab.github.io/">← TCNL Lab · all analyses</a>
+  <a href="index.zh-TW.html">中文</a>
+</div>
+
+<span class="tag">Held-out validation</span>
+<h1>Predicting standardised-test composite scores from multimodal brain data</h1>
+<p class="subtitle">
+  Sibling repo to the TCNL Quanta multimodal brain-age stack (n = 427). Same
+  frozen 80/20 age × sex stratified split (341 train / 86 held-out), same
+  modality blocks — but the targets are seven cognitive and motor composite
+  scores (WAIS Verbal Comprehension Index, three Wechsler memory indices,
+  and three motor composites) instead of chronological age.
+</p>
+
+<p>
+  <a class="cta" href="https://quanta-st-composites.streamlit.app/">
+    Launch interactive demo<span class="arrow">→</span>
+  </a>
+  <span class="badge" style="margin-left:0.6rem">live on Streamlit Cloud</span>
+</p>
+
+<h2>Held-out results</h2>
+<table class="targets">
+  <thead>
+    <tr>
+      <th>Composite</th>
+      <th>CV MAE</th>
+      <th>Test MAE</th>
+      <th>Test R²</th>
+      <th>Test ρ</th>
+      <th>Δ vs baseline</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Motor — Processing Speed</td><td>6.93</td><td>7.02</td><td><b>0.593</b></td><td><b>0.770</b></td><td>-4.36</td></tr>
+    <tr><td>Motor — Fine Motor</td><td>6.38</td><td>5.35</td><td><b>0.547</b></td><td><b>0.749</b></td><td>-2.84</td></tr>
+    <tr><td>Motor — Balance</td><td>12.05</td><td>10.82</td><td><b>0.480</b></td><td><b>0.699</b></td><td>-5.85</td></tr>
+    <tr><td>Memory — Visual Immediate</td><td>10.77</td><td>11.51</td><td>0.247</td><td>0.573</td><td>-1.72</td></tr>
+    <tr><td>Language — VCI</td><td>9.76</td><td>10.19</td><td>0.153</td><td>0.438</td><td>-0.96</td></tr>
+    <tr><td>Memory — Auditory Immediate</td><td>9.77</td><td>10.23</td><td>0.104</td><td>0.409</td><td>-0.97</td></tr>
+    <tr><td>Memory — Working Memory</td><td>9.88</td><td>9.39</td><td>0.069</td><td>0.283</td><td>-0.74</td></tr>
+  </tbody>
+</table>
+<p class="small">
+  CV MAE: 5-fold cross-validated MAE on the 341 training subjects.
+  Baseline = training-mean predictor; Δ is held-out MAE minus that baseline.
+  All seven targets beat the training-mean baseline on the held-out 86.
+</p>
+
+<h2>Composite-score design</h2>
+<p>
+  Targets were taken from the test-publisher canonical norm / scaled
+  composite indices in the cleaned phenotype file. Candidates that were
+  exact or near-exact linear combinations of the other composites were
+  removed: <code>MEMORY_ST_NORM_ImmMem</code> (R² = 0.996 on AudImm + VisImm),
+  <code>LANGUAGE_ST_SCALED_SUM</code> (R² = 0.982 on RAW_SUM), the raw
+  language sum (not age-normed; superseded by VCI), and
+  <code>LANGUAGE_ST_NORM_PR</code> (R² = 0.873; monotone percentile transform
+  of VCI). After pruning, leave-one-out R² is below 0.42 for every kept
+  composite and the standardized design-matrix condition number is 2.63.
+</p>
+
+<h2>Modality contribution (held-out Δ test MAE per dropped block)</h2>
+<p>
+  Each row is the change in held-out MAE when that block is removed from
+  the full stack (positive = block was informative; near-zero = redundant).
+</p>
+<table class="targets">
+  <thead>
+    <tr><th>Composite</th><th>Most informative block (Δ test MAE)</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Motor — Processing Speed</td><td>BEH (+0.81)</td></tr>
+    <tr><td>Memory — Visual Immediate</td><td>DEMO (+0.34)</td></tr>
+    <tr><td>Memory — Auditory Immediate</td><td>BEH (+0.26)</td></tr>
+    <tr><td>Language — VCI</td><td>DTI (+0.19)</td></tr>
+    <tr><td>Motor — Balance</td><td>DEMO (+0.15)</td></tr>
+    <tr><td>Memory — Working Memory</td><td>BEH (+0.10)</td></tr>
+    <tr><td>Motor — Fine Motor</td><td>BEH (+0.10)</td></tr>
+  </tbody>
+</table>
+<p class="small">
+  Behaviour features dominate four of seven targets; demographics dominate
+  Visual Memory and Balance; DTI is the most informative single block for
+  the language composite. EEG, MRI, deep features, and rs-fMRI FC PCA
+  contribute marginally in this stacked configuration because the
+  per-block ridge OOFs share most of their age and general-ability signal.
+</p>
+
+<h2>Composite-prediction deviation (Zhang-corrected)</h2>
+<p>
+  Per-subject prediction error is corrected for the regression-to-mean bias
+  by subtracting the mean prediction of other-fold subjects within ±4 units
+  of the subject's true composite score (same scheme as the brain-age PAD
+  validation). The corrected deviation is then Pearson-correlated against
+  the 30 <code>BASIC_Q_*</code> questionnaire columns and the 70 unused
+  <code>_ST_</code> measures.
+</p>
+<p>
+  After Benjamini-Hochberg FDR correction across the 100 features tested per
+  target, each composite has 58–75 FDR-significant correlates. Strong
+  recurring patterns:
+</p>
+<ul>
+  <li>SF-36 Energy correlates negatively with Motor deviations (worse-than-predicted
+      motor scores covary with lower self-reported energy).</li>
+  <li>Aerobic-rating and waist-hip ratio correlate with Memory deviations
+      (cardiovascular fitness markers track over- and under-prediction).</li>
+  <li>Pegboard and symbol-coding raw sub-scores correlate with Fine Motor
+      and Processing Speed deviations — sibling motor subtests that were not
+      themselves model inputs.</li>
+  <li>Sleep quality (PSQI) and Beck Anxiety / Depression correlate with
+      several Memory deviations.</li>
+</ul>
+<p class="small">
+  Full table available in the interactive demo and in
+  <code>reports/deviation_correlations.csv</code>.
+</p>
+
+<h2>Cohort & pipeline</h2>
+<ul>
+  <li><strong>Cohort.</strong> 427 healthy adults, age 19–80, TCNL Quanta multimodal ageing study.</li>
+  <li><strong>Modalities.</strong> behaviour (199) · EEG morphology + PSD (659) ·
+      T1-w MRI morphometry (1094) · DTI ROI (90 FA + MD) · deep features (71;
+      SFCN + Pyment) · rs-fMRI Schaefer-400 FC PCA-50 · age + sex.</li>
+  <li><strong>Stack.</strong> Per-block RidgeCV out-of-fold predictions →
+      RidgeCV meta-learner. 5-fold inner CV; refit on the full 341 training
+      subjects for the held-out prediction.</li>
+  <li><strong>Split.</strong> Inherited from the brain-age held-out repo:
+      80 / 20 age × sex stratified, frozen ahead of the final run.</li>
+</ul>
+
+<footer>
+  Source: <code>tcnl2021-lab/quanta-st-composites</code> (preparing for public
+  upload). Working repo: internal <code>Quanta_st_composites</code>. No raw
+  subject features ship with this demo — only de-identified position-indexed
+  prediction vectors, the per-target metric summaries, the modality ablation
+  table, and the deviation-correlation table.
+</footer>
+
+</body>
+</html>
